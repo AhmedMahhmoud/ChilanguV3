@@ -1,0 +1,169 @@
+import 'dart:developer';
+import 'dart:io';
+import 'dart:async';
+import 'package:flutter/cupertino.dart';
+import 'package:path_provider/path_provider.dart';
+
+import 'package:qr_users/FirebaseCloudMessaging/NotificationMessage.dart';
+import 'package:sqflite/sqflite.dart';
+import 'package:path/path.dart';
+
+class DatabaseHelper {
+  static const _dbName = "cache.db";
+  static Database _database;
+  /////////Notifications///////
+  static const _notificationTableName = "NotificationTable";
+  static const _notificationColTitle = "title";
+  static const _notificationColMsgSeen = "seen";
+  static const _notificationColMsg = "message";
+  static const _notificationColMessageTime = "timeMessage";
+  static const _notificationColDate = "date";
+  static const _notificationColId = "id";
+  static const _notificationColCategory = "category";
+  DatabaseHelper() {
+    database;
+  }
+  //Initializting the database opening a path with the directory.
+  initializedDatabase() async {
+    final Directory directory = await getApplicationDocumentsDirectory();
+    final String path = join(directory.path, _dbName);
+    final myOwnDb = await openDatabase(path, version: 1, onCreate: _onCreate);
+    return myOwnDb;
+  }
+
+  //Creating tables inside the database
+  _onCreate(Database db, int newVersion) async {
+    await db.execute('''
+        CREATE TABLE $_notificationTableName($_notificationColId INTEGER PRIMARY KEY ,$_notificationColTitle TEXT NOT NULL,
+        $_notificationColMsg TEXT NOT NULL ,$_notificationColDate TEXT NOT NULL  ,$_notificationColCategory TEXT 
+        ,$_notificationColMsgSeen INTEGER NOT NULL,$_notificationColMessageTime)
+        ''');
+  }
+
+  Future<Database> get database async {
+    if (_database == null) {
+      _database = await initializedDatabase();
+      log("database intialized");
+      return _database;
+    }
+    return _database;
+  } ////////////////////////////RATES////////////
+
+  //////////////////////notifications//////
+  Future<int> insertNotification(
+      NotificationMessage notificationMessage, BuildContext context) async {
+    final int id = await _database
+        .insert(_notificationTableName, notificationMessage.toMap(),
+            conflictAlgorithm: ConflictAlgorithm.replace)
+        .catchError((e) {
+      print(e);
+    });
+    debugPrint("Notification added$id");
+    return id;
+  }
+
+  Future<void> insertOfflineNotification(
+    NotificationMessage notificationMessage,
+  ) async {
+    try {
+      await _database
+          .insert(_notificationTableName, notificationMessage.toMap(),
+              conflictAlgorithm: ConflictAlgorithm.replace)
+          .then((value) async {
+        debugPrint("Notification $value");
+      }).catchError((e) {
+        log(e);
+      });
+    } catch (e) {
+      log(e);
+    }
+  }
+
+  Future<List<NotificationMessage>> getAllNotifications() async {
+    try {
+      final List<Map<String, dynamic>> notifis =
+          await _database.query(_notificationTableName).catchError((e) {
+        log(e);
+      });
+      return List.generate(notifis.length, (index) {
+        return NotificationMessage(
+            id: notifis[index]["id"],
+            category: notifis[index]["category"],
+            dateTime: notifis[index]["date"],
+            message: notifis[index]["message"],
+            timeOfMessage: notifis[index]["timeMessage"],
+            messageSeen: notifis[index]["seen"],
+            title: notifis[index]["title"]);
+      });
+    } catch (e) {
+      log(e);
+    }
+    return null;
+  }
+
+  clearNotifications() async {
+    try {
+      bool databaseDeleted = false;
+
+      try {
+        final Directory documentsDirectory =
+            await getApplicationDocumentsDirectory();
+        final String path = join(documentsDirectory.path, _dbName);
+        _database = null;
+        await deleteDatabase(path).whenComplete(() {
+          databaseDeleted = true;
+          debugPrint("db deleted");
+        }).catchError((onError) {
+          databaseDeleted = false;
+        });
+      } on DatabaseException catch (error) {
+        debugPrint(error.toString());
+      } catch (error) {
+        print(error);
+      }
+
+      return databaseDeleted;
+    } catch (e) {
+      log(e);
+    }
+  }
+
+  Future<void> deleteByID(
+    int id,
+  ) async {
+    try {
+      await _database.rawQuery(
+          'DELETE FROM $_notificationTableName WHERE $_notificationColId=?',
+          [id]).then((value) {
+        debugPrint("delete $value $id");
+      }).catchError((e) {
+        log(e);
+      });
+    } catch (e) {
+      log(e);
+    }
+  }
+
+  Future<bool> checkNotificationStatus() async {
+    bool bol;
+    await getAllNotifications().then((value) {
+      if (value == null || value.isEmpty) {
+        bol = false;
+      } else {
+        bol = true;
+      }
+    });
+    return bol;
+  }
+
+//Update request
+  Future<void> readMessage(int value, int id) async {
+    try {
+      await _database.rawUpdate(
+          'UPDATE $_notificationTableName  SET $_notificationColMsgSeen = ? WHERE $_notificationColId=? ',
+          [value, id]);
+    } catch (e) {
+      print(e);
+    }
+  }
+}

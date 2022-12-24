@@ -1,0 +1,107 @@
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
+
+class PrData {
+  String interfaceName;
+  IconData icon;
+  final Permission permission;
+
+  PrData({this.icon, this.interfaceName, this.permission});
+}
+
+class PermissionHan with ChangeNotifier {
+  bool showHome = true;
+  Locale locale = const Locale("en_US");
+  bool showQr = true;
+  bool attendProovTriggered = false;
+  bool showNotification = false;
+  bool showReport = true;
+  bool isUserScrolling = false;
+  bool showSettings = true;
+  bool isServerDown = false;
+  bool isInternetConnected = true;
+  bool currentDialogOnstream = true;
+  bool anyDialogOpened = false;
+  List<PrData> permissionsList = [
+    PrData(
+        icon: Icons.location_on,
+        interfaceName: "تصريح الموقع",
+        permission: Permission.locationWhenInUse),
+
+    // PrData(interfaceName: "تصريح الصور", permission: Permission.storage),
+    // PrData(interfaceName: "تصريح الصوت", permission: Permission.microphone),
+    PrData(
+        icon: Icons.camera_alt_outlined,
+        interfaceName: "تصريح الكاميرا",
+        permission: Permission.camera)
+  ];
+  setNotificationbool(bool data) {
+    showNotification = data;
+    notifyListeners();
+  }
+
+  setServerDown(bool isDown) {
+    isServerDown = isDown;
+  }
+
+  setUserScrolling() {
+    isUserScrolling = true;
+    notifyListeners();
+  }
+
+  initializeUserScroll() {
+    isUserScrolling = false;
+  }
+
+  resetUserscrolling() {
+    isUserScrolling = false;
+    notifyListeners();
+  }
+
+  setInternetConnection(bool isConnected) {
+    isInternetConnected = isConnected;
+  }
+
+  setDialogonStreambool(bool data) {
+    currentDialogOnstream = data;
+  }
+
+  setLocale(Locale newLocale) {
+    locale = newLocale;
+    notifyListeners();
+  }
+
+  bool isEnglishLocale() {
+    if (locale.toString() == "en_US") {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  triggerAttendProof() {
+    attendProovTriggered = true;
+    notifyListeners();
+  }
+
+  setAttendProoftoDefault() {
+    attendProovTriggered = false;
+    notifyListeners();
+  }
+
+  Future filterList() async {
+    permissionsList.forEach((element) async {
+      if (await element.permission.status == PermissionStatus.granted) {
+        permissionsList.remove(element);
+      }
+      debugPrint(permissionsList.length.toString());
+    });
+    notifyListeners();
+  }
+
+  deletePer(int id) {
+    permissionsList.removeAt(id);
+    notifyListeners();
+  }
+}

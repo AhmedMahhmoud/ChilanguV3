@@ -1,0 +1,686 @@
+{
+
+    "المواقع":"Sites",
+    "المناوبات":"Shifts",
+    "ادارة المواقع":"Sites management",
+    "ادارة المناوبات":"Shifts management",
+    "ادارة المستخدمين":"Users management",
+    "اعدادات الشركة":"Company settings",
+    "ادارة اعدادات الشركة":"Company settings management",
+    "اعدادات اللغة":"Language settings",
+    "ضبط اعدادات اللغة":"Lanugage settings management",
+    "المستخدمين":"Users",
+    "الاعدادات":"Settings",
+    "سجل الأن":"Register now",
+    "برجاء التواجد بموقع العمل":"You are out of work area !",
+    "التقارير":"Reports",
+    "الحضور اليومى":"Daily attendance",
+    "تقرير الحضور اليومى":"Daily attendance report",
+    "التأخير و الغياب":"Late & Absence",
+    "تقرير التأخير و الغياب":"Late & Absence Report",
+    "حضور مستخدم":"User Attend",
+    "يرجى تحديد تاريخ":"please select a valid date",
+    "تقرير حضور المستخدم":"User attendance report",
+    "الأجازات و المأموريات":"Missions & Holidays",
+    "تقرير الأجازات و المأموريات و الأذونات":"Permissions , Missions & Holidays Report",
+    "حسابى":"My profile",
+    "شركاتى":"My companies",
+    "لوحة التحكم":"Management panel",
+    "عن":"About",
+    "عن التطبيق":"About app",
+    "المعرض":"Gallery",
+    "من نحن":"About us",
+    "تسجيل خروج":"Logout",
+    "هل تريد تسجيل الخروج؟":"Do you want to logout?",
+    "لا يوجد اشعارات":"There are no notifcations",
+    "تقرير اليوم":"Today's report",
+    "تقرير الحضور / الأنصراف عن اليوم":"Today's absence / Attend report",
+    "تقرير عن فترة":"Periodic report",
+    "تقرير الحضور / الأنصراف عن فترة":"Today's absence / Attend report by period",
+    "الطلبات":"Requests",
+    "تاريخ إنشاء الطلب":"Created on date",
+    "طلب اذن / اجازة":"Holiday / Permission request",
+    "طلباتى":"My requests",
+    "طلب اذن":"Permission request",
+    "متابعة حالة الطلبات":"Follow up on requests",
+    "مناوباتى":"My shifts",
+    "مأمورياتى":"My missions",
+    "عرض مناوبات الأسبوع":"Display shifts of the week",
+    "لا يوجد بيانات لهذا المستخدم اليوم":"There is no information for this user today",
+   "لا يوجد تسجيلات بهذا المستخدم":"There is no records for this user",
+   "تقرير الحضور":"Attendance report",
+   "عدد مستخدمين الشركة":"Total users number",
+    "الموجود":"Present",
+    "الأجازة":"Holiday",
+    "تم الموافقة بنجاح":"Successfully approved",
+    "تسجيل طلب للمستخدم":"Register request For :",
+    "المأموريات الخارجية":"External missions",
+    "تمام شركة":"Statistical report for",
+    "تمام الشركة":"Company statistics",
+  "تمام الشركة عن اليوم":"Company statistics for today",
+    "كلمة المرور يجب ان تكون اكثر من 8 احرف و اقل من 12":"Password must be > 8 and < 12 characters",
+    "التاريخ":"Date",
+    "التأخير":"Late","الموقع":"Site",
+    "حضور":"Attend",
+    "انصراف":"Leave",
+    "غياب":"Absence",
+    "مأمورية":"Mission",
+    "ايام الغياب":"Absence days",
+    "مدة التأخير":"Late duration","ايام التأخير":"Late days","خصم الغياب":"Absence deduction",
+    "خصم التأخير":"Late deduction","إجمالى الخصومات":"Total deductions",
+    "نوع الطلب":"Request type",
+    "نوع الأجازة":"Holiday type",
+    "نوع الأذن":"Permission type",
+    "اجازة":"Holiday",
+    "أذن":"Permission",
+    "المدة من / الى":"Duration from / to",
+    "قم بأدخال التفاصيل هنا":"Enter the details here",
+    "حفظ الطلب":"Save request",
+    "عارضة":"Casual",
+    "مرضية":"Sick Leave",
+    "هل تريد حفظ الطلب ؟":"Confirm request ?",
+    "مرضى":"Sick leave",
+    "رصيد اجازات":"Balance",
+    "مدة الأجازة":"Holiday duration",
+    "تأخير عن الحضور":"Late attend",
+    "انصراف مبكر":"Early leave", 
+    "اليوم":"Day",
+    "الوقت":"Time",
+    "اذن حتى الساعة":"Permission until",
+    "اذن من الساعة":"Permission from",
+    "تاريخ الأذن":"Permission date",
+    "المدة من / إلى":"Duration from / to",
+    "من":"From",
+    "إلى":"To","داخلية":"Internal",
+    "خارجية":"External",
+    "لا يوجد مأموريات لهذا المستخدم":"There are no missions for this user",
+    "مأموريات المستخدم":"User missions",
+    "اجازات المستخدم":"User holidays",
+    "لا يوجد اجازات لهذا المستخدم":"There are no holidays for this user",
+    "اذونات المستخدم":"User permissions",
+    "لا يوجد اذونات لهذا المستخدم":"There are no permessions for this user",
+    "مدة المأمورية":"Mission duration",
+    "يوم":"Day",
+    "إثباتات الحضور"
+    :   "Attend proofs",
+    "الموقع و المناوبة للمأمورية":"Site & Shift for the mission",
+    "نوع المأمورية":"Mission type",
+    "لا يوجد اذونات لم يتم الرد عليها":"There are no unanswered permissions",
+    "لا يوجد اجازات لم يتم الرد عليها":  "There are no unanswered holidays",
+    "لا يوجد إثباتات حضور فى هذا اليوم":"There are no attend proofs at this day",
+"تم الموافقة على طلب الأذن":"Permission request approved.",
+    "تم اختيار":"Chosen",
+    "الموافقة على طلب":"Request approval",
+    "الأجازات":"Holidays",
+    "الأذونات":"Permissions",
+    "البحث برقم الطلب":"Search by request number",
+    "عرض طلبات":"Requests display",
+    "الأذن":"Permission",
+    "لا يوجد طلب بهذا الرقم":"There is no request with this number",
+    "تفاصيل الطلب":"Request details",
+    "تم إرسال الطلب  برجاء انتظار الرد":"Request sent please wait for response",
+"مناوباتى الأساسية":"Main shifts",
+"مناوباتى المجدولة":"Scheduled shifts",
+"اختر لغة التطبيق":"Choose application langugage",
+"السبت":"Saturday",
+"العربية":"العربية",
+"تغير اللغة":"Change Langugage",
+"English":"English", 
+"لغة التطبيق":"App Langugage",
+"تسجيل عن طريق مسح الكود":"Register by QR scan",
+"تسجيل الحضور من":"Attendance registeration from",
+"التسجيل ببطاقة التعريف الشخصية":"Register by ID card",
+"تسجيل الانصراف من":"Leave Registeration From",
+"تأكيد الموافقة على الأذن":"Permission confirmation",
+"تسجيل طلب للمستخدم:":"Assign request for :",
+"تسجيل الأنصراف":"Register Leave",
+ "الأحد":"Sunday"
+ , "الأثنين":"Monday",
+ "الثلاثاء":"Tuesday",
+ "الأربعاء":"Wednesday",
+ "الخميس":"Thursday",
+ "الجمعة":"Friday",  "خطأ في التسجيل":  "Registration error",
+ "الغاء":"Cancel",
+ "حدث خطأ ما":"Something went wrong",
+ "لقد ادخلت رقم او كلمة سر خاطئة \n  برجاء اعادة المحاولة مرة اخرى"
+ :"You entered invalid username/password \n Please try again later",
+ "رمز التفعيل":"Activation Code",
+ "اعادة ارسال رمز التفعيل":"Resend activation code",
+   "تم ارسال الطلب برجاء انتظار الرد":"The request sent, please wait for a response."
+, "لم يصلك رمز التفعيل ؟\n لإعادة الإرسال برجاء الانتظار":
+ "You did not receive the activation code? \n  To resend please wait",
+ "تم ارسال رمز التفعيل على الهاتف و البريد الإلكترونى الخاص بكم":
+ "The activation code sent to your phone and e-mail.",
+ "تم ارسال رمز التفعيل بنجاح على رقم الهاتف الخاص بكم":"The activation code successfully sent to your phone number",
+ "الأسم":"Name","مجموع الخصومات":"Total Deductions",
+  "عطلة اسبوعية":         "Weekend",
+ "الغياب":"Absence", "عطلة رسمية":"Official Vacation",
+ "حالة الإثبات":"Status",
+ "تسجيل ببطاقة التعريف الشخصية"
+ :"Attend by id card",
+
+ "لا يوجد تسجيلات بهذا اليوم":"No records found for this day",
+ "المستخدم لم يكن مقيدا فى هذة الفترة":"User wasn't created at this period",
+ "الخصومات":"Deductions","لا يوجد تسجيلات: يوم اجازة":"There are no records : Holiday",
+
+ "تقرير الأجازات و المأموريات":"Missions & Holidays Report",
+ "المأموريات":"Missions", "لا يوجد تسجيلات : عطلة اسبوعية":"There are no records : Week Holiday",
+ "لا يوجد تسجيلات : عطلة رسمية":"There are no records : Official Vacation",
+ "طلبات الأذونات":"Permission Requests","طلبات الأذونات للمستخدمين":"Permission Requests For Users",
+ "دليل المواقع": "Sites", "طلبات الأجازات":"Holiday Requests",
+ "طلبات الأجازات للمستخدمين":"Holiday Requests For Users",
+ "البحث بأسم الموقع":"Search by Site Name",
+ "تقرير إثبات الحضور":"Attend Proof Report",
+ "دليل المناوبات":"Shifts",   "إثبات الحضور":"Attend Proof",
+ "دليل المستخدمين":"Users",
+ "كل المواقع":"All Sites",
+ "الرئيسية":"Home",
+ "التسجيل":"Register",
+ "خطأ في اعادة الضبط":"Reset failed",
+ "إضافة مستخدم":"Add User",
+ "كل المناوبات":"All Shifts",
+ "اسم المستخدم":"Username",
+ "الوظيفة":"Job",
+ "البريد الالكترونى":"E-mail",
+ "رقم الهاتف":"Phone Number",
+ "المرتب":"Salary",
+ "إضافة":"Add",
+ "إضافة من جهات الاتصال":"Add from contacts",
+ "مطلوب":"Required",
+ "التطبيق تحت الصيانة\nنجرى حاليا تحسينات و صيانة للموقع \nلن تؤثر هذه الصيانة على بيانات حسابك \n نعتذر عن أي إزعاج":
+"The application is under maintenance\nWe are currently making improvements and maintenance \nThis maintenance will not affect your account data \nWe apologize for any inconvenience"
+,"تعذر الوصول الى الخادم \n  برجاء اعادة المحاولة فى وقت لاحق":"Server can't be reached \n Please try again later",
+"مستخدم":"User",
+"مسئول تسجيل":"Registry Responsible",
+"مدير موقع":  "Site Manager",
+"موارد بشرية":  "HR Manager",
+"لا يوجد اتصال بالأنترنت \n  برجاء اعادة المحاولة مرة اخرى":
+"There is no internet connection,\n Please try again",
+"برجاء اعادة المحاولة مرة اخرى":"Please try again",
+"لا يوجد اتصال بالأنترنت":"No internet connection",
+"ادمن":"Admin",
+"خطأ فى البيانات الحساب":"Account Data Error",
+"تعديل بيانات المستخدم":"Edit User Data",
+"حفظ":"Save","تعديل":"Edit",    "لا يوجد اتصال بالانترنت":"No Internet Connection",
+"من فضلك راجع مدير النظام":
+"من فضلك راجع مدير النظام",
+"خطأ فى بيانات الحساب":"خطأ فى بيانات الحساب",
+"الشركة متوقفة حاليا\nمن فضلك راجع مدير النظام":
+"The company is currently down.\n Please see the system administrator",
+"العطلات الأسبوعية":"Weekends",
+"العطلات الرسمية":"Official Vacations",
+"اعدادات الحضور و الأنصراف":"Attend/Absence Settings",
+"ادارة العطلات الأسبوعية":"Manage Weekends Settings",
+"ادارة العطلات الرسمية":"Manage Official Vacations",
+"ادارة الحضور و الأنصراف":"Manage Attend/Absence",
+"ايام العطلات للشركة":"Company Week Days",
+"لا يمكن اختيار اكثر من يومين":"You can't select more than 2 days",
+"أسم العطلة":"Holiday Name",
+"لا يوجد عطلات رسمية":"There are no official vacations",
+"إضافة عطلة":"Add Holiday",
+"عدد ايام العطلة":"Holidays number",
+"تعديل عطلة":"Edit Holiday",
+"سماحية التأخير (دقيقة)":"Late Tolerance (minutes)",
+"سماحية تسجيل الحضور":"Attend Register Tolerance",
+"تسجيل الحضور"
+:"Register Attend",
+"خطأ : برجاء التقاط صورة حقيقية":
+"Fail : Please take a real photo",
+"حذف العطلة":
+"Delete Holiday",
+"... برجاء انتظار انتهاء عملية المسح":
+"Please wait for the scanning process to finish ...",
+"لا يمكنك التسجيل كود غير صحيح":"You can't register (invalid QR)",
+"برجاء تصوير وجهك بوضوح":"Please photograph your face clearly",
+"خطا : تم التعرف علي اكثر من وجة":"Failed : More than one face identified",
+"لم يتم التسجيل : اجازة شخصية":"Failed : Personal Holiday",
+"سماحية تسجيل الأنصراف":"Leave Register Tolerance "
+, "0-30 دقيقة":
+    "0-30 Minutes" ,"لا يوجد نتائج للبحث":"No search results found",
+    "ساعات":"Hours",
+    "الأنتظام":"InTime",
+    "لا يمكنك تسجيل الإنصراف الأن":"You can't regsiter leave now",
+    "تحليل بيانات الموظف":"User Information Analysis",
+    "اعادة ضبط هاتف المستخدم":"Reset User Phone",
+"جدولة المناوبات":"Schedule Shifts",
+"إرسال اثبات حضور":"Send Attend Proof",
+"عدم الظهور فى التقرير":"Hide from reports",
+"السماح للمستخدم بالتسجيل بالبطاقة":"ID registry allowance ",
+"تسجيل  مأموريات / اذونات / اجازات":"Register Mission / Permission / Holiday",
+"جنية مصرى":"EGP",
+"تسجيل اذونات / اجازات":"Register Permission / Holiday",
+"لا يوجد مستخدمين بهذا الموقع":"There are no users in this site",
+"لا يوجد مستخدمين بهذه المناوبة\nبرجاء اضافة مستخدمين":
+"There are no users in this shift\nPlease add users to this shift",
+"لا يوجد مستخدمين بهذا الموقع\nبرجاء اضافة مستخدمين":
+"There are no users in this site\nPlease add users to this site",
+"كود بطاقة التعريف الشخصية": "Personal ID Card Code",
+"تاريخ التعيين":"User create date",
+"تغير كلمة السر":"Change Password",
+"كلمة المرور":"Password",
+"برجاء ادخال كلمة مرور":"Please Enter Password",
+"تأكيد كلمة المرور":"Confirm Password",
+"تسجيل الدخول":"Login",
+"تم تسجيل الإنصراف بنجاح":"Leave registered successfully",
+"تم التسجيل بنجاح":"Successfully Registered",
+"لقد تم تسجيل الحضور من قبل":"Attendance has already been registered",
+"لقد تم تسجيل الأنصراف من قبل":"Leave has already been registered",
+"اعطاء تصريح":"Give Permission",
+"برجاء قبول التصريحات التالية":      "Please accept the following permissions",
+"متابعة":"Continue",
+"نعم":"Yes",
+"لا":"No",
+"المقر الرئيسى":"Headquarters",
+"خدمة العملاء":"Customer Service",
+"رقم التليفون":"Phone Number",
+"البريد الإلكترونى":"E-Mail Address",
+"الموقع الإلكترونى":"Website",
+"اعمالنا على المتجر":"Our Work On Store"
+,
+"تخطى":"Skip",
+    "وداعا لمشاكل الصيانة و الأعطال":
+    "Goodbye to maintenance problems and malfunctions",
+    "وداعا لمشاكل الحضور و الأنصراف بالطرق التقليدية"
+    :"Goodbye to the problems of attendance and departure by traditional ways",
+    "من حسابك تستطيع":"From your account you can\n\n",
+    "وداعا للروتين و التأخير"
+    :"Goodbye to routine and delay",
+    "accountCan":"Submit a leave or permission request and follow up on its status\nView your attendance report for the day or for a period",
+    "adminCan":"View the attendance reports in period \n Following on the current status for leave and attend for the company \n Giving permessions-vacations and assigning missions to employees",
+    "مدير النظام يستطيع":"Admin can \n\n",
+    "الحضور و الأنصراف  اسهل مع CHILANGU" :
+    "Now attendance and departure has become easier with CHILANGU",
+    "phoneCan":
+    "Using your phone, you can \nrecord attendance and leave with ease",
+    "تقديم طلب أجازة أو إذن و متابعة حالته\nعرض تقرير الحضور و الإنصراف الخاص بك عن اليوم أو عن فترة"
+    :    "تقديم طلب أجازة أو إذن و متابعة حالته\nعرض تقرير الحضور و الإنصراف الخاص بك عن اليوم أو عن فترة",
+    ". كمدير تقدر تتابع موظفينك و تقاريرهم و ترد على طلباتهم من اى مكان و فى اى وقت" : 
+    "As a manager, you can follow up on your employees and their reports and respond to their requests anytime and anywhere .",
+    "ابدأ":"Start",
+    "تم الرفض بنجاح":"Successfully rejected",
+    "خطأ فى الرفض : انتهى وقت الطلب":"Rejection Error: Request timed out",
+    "خطأ في الرفض":"Rejection Error",
+    "رفض  طلب":" Reject Request ",
+    
+    "لا يمكن التسجيل بمناوبتك الأن":"You can't register in your shift now",
+    "لم يتم التسجيل: لديك مأمورية خارجية":"Not registered: You have an external mission",
+    "او":"OR",
+    "خطأ فى التسجيل: برجاء التواجد بموقع العمل"
+    :"Registration error: Please be on the job site",
+    "تم إضافة الأجازة بنجاح":"Holiday added successfully",
+    "خطأ فى التسجيل: بيانات الهاتف غير صحيحة\nبرجاء التسجيل من هاتفك أو مراجعة مدير النظام"
+    :"Registration error: The phone data is incorrect.\nPlease register from your phone or see the system administrator."
+    ,"خطأ فى التسجيل: برجاء التسجيل بنفس طريقة تسجيل الحضور"
+    :"Registration error: Please register in the same way as attendance",
+    "خطأ فى التسجيل: كود غير صحيح":"Registration error: Invalid QR Code",
+    "خطأ فى التسجيل: لا يوجد اتصال بالانترنت":"Registration error: No Internet Connection"
+    ,"خطأ فى التسجيل: عدم تفعيل الموقع الجغرافى للهاتف":"Registration error: The geographical location of the phones is not enabled",
+    "لم يتم التسجيل : عطلة رسمية":"Not registered: official holiday",
+    "خطأ فى التسجيل: لم يتم اثبات حضور المستخدم":"Registration Error: The user did not prove attend",
+    "التسجيل غير متاح الأن":"Registration is not available now",
+    "خطأ فى التسجيل":"Registration Error",
+    "خطأ في الحذف":"Delete Error",
+    "هل تريد حذف الطلب":"Do you want to delete the request",
+    "حذف الطلب":"Delete Request",
+    "تعليق الأدمن":"Admin Comment",
+    "سبب الرفض":"Reason of refuse",
+    "هل تريد حذف":"Do you want to delete",
+    "تم حذف العطلة بنجاح":
+    "Holiday deleted successfully",
+    "خطأ في حذف العطلة":"Error deleting holiday","لا يمكنك حذف طلب تسجيل حضور لم تقم بإنشاؤه":
+    "You cannot delete an attendance request that you did not create",
+    "تم حفظ الصورة بنجاح":"Image is successfully saved",
+    "خطأ في التعديل: لا يوجد اتصال بالانترنت":"Edit Error: No internet connection",
+    "خطأ في حفظ الصورة":"Error saving the image",
+    "خطأ في الحذف : لا يوجد اتصال بالانترنت":"Delete Error: No internet connection",
+    "تم الحذف بنجاح":"Deleted Successfully",
+    "تم حذف الإثبات بنجاح":"Proof deleted successfully",
+    "خطأ في الحذف: هذا الموقع يحتوي على مناوبات\nبرجاء حذف المناوبات اولا"
+    :"Error : This site contains shifts\nPlease remove shifts first",
+    "إزالة موقع":"Remove Site",
+    "حذف الإثبات":
+    "Delete Proof",
+"هل تريد حذف الإثبات":
+"Do you want to delete the proof ?",
+"خطأ في حذف الإثبات":
+"Error deleting the proof",
+    "هل تريد إزالة":"Do you want to remove",
+    "خطأ في الحذف: هذه المناوبة تحتوي على مستخدمين. برجاء حذف المستخدمين اولا"
+    :"Error: This shift contains users. Please delete users first"
+  ,"إزالة مناوبة":"Delete Shift",
+  "إزالة مستخدم":"Delete User",
+  "تم الأرسال بنجاح":"Sent successfully",
+"خطأ فى الأرسال":"Error in sending",
+"خطأ : لا يمكن طلب اثبات حضور خارج توقيت المناوبة":
+"Error: It is not possible to request attend proof outside the hours of the shift",
+"خطأ : لقد تجاوزت العدد المسموح بة لهذا المستخدم"
+:"Error: You have exceeded the number allowed for this user",
+"خطأ فى الأرسال \n لم يتم تسجيل الدخول بهذا المستخدم من قبل":
+"Sending error \n This user has not been logged in before",
+"لم يتم تسجيل حضور هذا المتسخدم"
+:"Error : This user is not registered",
+"لا يوجد جدولة لهذا المستخدم":"There is no schedule for this user",
+"تم الحفظ بنجاح":"Saved Successfully",
+"لا يمكن طلب الاجازة : يوجد مأمورية داخلية":"It is not possible to request leave: there is an internal mission"
+,"قم بأدخال مدة الأجازة":"Enter holiday duration",
+"يوجد اجازة لم يتم الموافقة عليها":"Error : There is an unapproved holiday",
+"يوجد اجازة فى هذا اليوم":"Fail : There is a Holiday on this day.",
+"يوجد مأمورية خارجية فى هذا اليوم":"Error : There is an external mission on this day",
+"يوجد اذن اخر فى هذا اليوم":"Fail : There is another permission on this day",
+"لقد تم تقديم طلب من قبل":"Fail : a request has already been submitted",
+"تم تقديم طلب الأذن بنجاح":"Permission request submitted successfully",
+"برجاء متابعة الطلب":"Please follow on the request",
+"لم يتم اثبات الحضور انتهى وقت التسجيل":"Attendance has not been confirmed. Registration has expired",
+"لم يتم اثبات الحضور : خارج موقع العمل"
+:"Attendance has not been proven: outside the work location",
+"لا يمكن طلب الاجازة : يوجد طلب اذن":"Error : Holiday cannot be requested: there is a permission request",
+"يوجد اذن فى هذا اليوم":"Fail : There is a permission in this day",
+"قم بأدخال البيانات المطلوبة":"Enter the required information",
+"لا يمكن طلب الاجازة : يوجد مأمورية خارجية"
+:"Error : Holiday cannot be requested: there is an external mission",
+"يوجد اجازة تم الموافقة عليها فى هذه الفترة":"Error : There is an approved Holiday during this period.",
+"تم طلب اذن من قبل المستخدم":"Permission requested by user ",
+"تم تقديم طلب الأجازة بنجاح":"Holiday request submitted successfully.",
+"لا يوجد تعليق":"No comment",
+"طلب اجازة":"Holiday Request",
+"تم الموافقة على طلب الأجازة":"The Holiday request approved",
+"خطأ فى بيانات المستخدم":"User Data Error",
+"خطأ فى الموافقة : انتهى وقت الرد"
+:"Approval Error: Response time expired",
+"خطأ فى الرفض : انتهى وقت الرد"
+:"Rejection Error: Response time expired",
+"خطأ في الموافقة":"Error in approval",
+"تأكيد الموافقة على الاجازة"
+:"Confirm holiday approval",
+"تم رفض طلب الأجازة":
+"Holiday request denied",
+"يجب ان لا يقل البحث عن 3 احرف":
+"Search must be at least 3 characters long"
+,
+"شارك التطبيق":
+"Share App",
+
+"قيم التطبيق"
+:"Rate App",
+"للشكاوى و المقترحات":
+"Complaints & Suggestions",
+"دليل الأستخدام"
+:"User's Manual",
+"تم تعديل المستخدم بنجاح"
+:"User edited successfully",
+"خطأ في تعديل المستخدم: رقم الهاتف مستخدم مسبقا":
+"Error: The phone number is already in use"
+,"خطأ في تعديل المستخدم":
+"Error editing user",
+"خطأ في تعديل المستخدم:المستخدم غير موجود":
+"Error : user does not exist",
+"خطأ في تعديل المستخدم:لايوجد اتصال بالانترنت":
+"Edit user error: no internet connection",
+"حفظ التعديل":
+"Save Edit",
+"هل تريد حفظ التعديل ؟"
+:"Do you want to save the edit?",
+"تم اضافة المستخدم بنجاح"
+:"User added Successfully",
+"تم الإضافة بنجاح"
+:"Added Successfully ",
+"تم تغيير الصورة بنجاح":
+"Image Uploaded Successfully",
+"تم الإرسال بنجاح"
+:"Sent Successfully",
+"تم الإضافة بنجاح "
+:"Added Successfully",
+"البريد الإلكترونى غير صحيح":
+"Invalid Email Address",
+"اختر بأسم البلد او الرقم الدولى":"Choose the name of the country or the international number",
+"يجب ان لا يتخطي البريد الإلكترونى عن 80 حرف":"Email should not exceed 80 characters",
+"خطأ في اضافة المستخدم : رقم الهاتف  مستخدم مسبقا"
+:"Error adding user: The phone number is already used",
+"خطأ في اضافة المستخدم : المستخدم موجود بالفعل"
+:"Error adding user: user already exists",
+"لقد وصلت الى الحد المسموح بة من المستخدمين"
+:"You have reached the maximum number of users",
+"خطأ في اضافة المستخدم"
+:"Error adding user",
+"خطأ في اضافة المستخدم:لايوجد اتصال بالانترنت"
+:"Error adding user: No internet connection",
+"لا يوجد مناوبات بهذا الموقع":
+"There are no shifts at this site.",
+"تم اضافة العطلة بنجاح":
+"Holiday added successfully",
+"خطأ فى اضافة العطلة"
+:"Error adding holiday",
+"تم تعديل العطلة بنجاح":
+"Holiday edited successfully",
+"خطأ فى تعديل العطلة":
+"Holiday edit error",
+"يجب ان يكون العدد من 1 - 10"
+:"The number should be from 1 - 10",
+"يجب ان لا يتخطي الأسم عن 40 حرف"
+:"The name must not exceed 40 characters",
+"خطأ في اضافة الموقع: اسم الموقع مضاف مسبقا":
+"Error : site name already exists",
+"لقد وصلت الى الحد المسموح بة من المواقع":
+"You have reached the maximum number of sites",
+"خطأ في اضافة الموقع"
+:"Error adding site",
+"خطأ في اضافة الموقع:لايوجد اتصال بالانترنت"
+:"Error adding the site: there is no internet connection",
+"تم تعديل الموقع بنجاح"
+:"The site successfully edited.",
+"خطأ في تعديل الموقع: اسم الموقع مضاف مسبقا":
+"Error : site name already exists",
+"خطأ في تعديل الموقع":
+"Error editing the site",
+"خطأ في تعديل الموقع:لايوجد اتصال بالانترنت":
+"Error modifying the site: there is no internet connection",
+"اثبات حضور":"Attend Proof",
+"برجاء اثبات حضورك قبل انتهاء الوقت المحدد"
+:"Please verify your attendance before the time limit expires",
+
+"تم اثبات الحضور بنجاح"
+:"Attendance confirmed",
+"اثبات"
+:"Proof",
+"حذف الأشعارات":
+"Delete notifications",
+"الأشعارات":"Notifications",
+"هل تريد حذف كل الأشعارات؟"
+:"Do you want to delete all notifications?",
+"اضغط مره اخرى للخروج من التطبيق":
+"Press again to exit the application",
+"برجاء اثبات حضورك الأن":"Please proof your attendance now.",
+"إضافة موقع":"Add Site",
+"الإجمالى":"Total",
+"خطأ في حفظ البيانات":"Failed saving data",
+"برجاء التقاط صورة شخصية للوجة اولا":
+"Please take a selfie first",
+"كلمة المرور غير متماثلتين"
+:"Password mismatch",
+"تمت اضافة المأمورية بنجاح"
+:"Mission added successfully",
+"تم وضع مأمورية لهذا المستخدم من قبل":
+"Error : Another InternalMission not approved for this user!",
+"تم تسجيل مأمورية داخلية لك"
+:"An internal mission assigned for you",
+"خطأ فى اضافة المأمورية":
+"Error adding mission",
+"تم تكليفك بمأمورية"
+:"You have been assigned a mission",
+"لا يمكنك وضع مأمورية خارجية فى اليوم الحالى"
+:"You can’t set an external mission on the current day",
+"تم وضع مأمورية خارجية لهذا المستخدم من قبل":
+"There is an external mission in this period!",
+"يوجد مأمورية داخلية فى هذا التاريخ"
+:"Error : There is an internal mission on this date",
+"برجاء ادخال المدة":
+"Please enter the duration",
+"تم تسجيل مأمورية خارجية لك":"An exteranl mission assigned to you",
+"خطأ في اضافة المأمورية":"Error adding mission",
+"نسيت كلمة المرور":"Forgot password ?",
+"مأمورية داخلية":"Internal Mission",
+"مأمورية خارجية":"External Mission",
+"التاريخ قبل إنشاء الشركة":"Date is before company creation",
+"تقرير حضور مستخدم":" User Attendance Report",
+"لا يمكن وضع الأجازة : يوجد مأمورية خارجية":"Error : There is an external mission"
+,"تأكيد رفض الأذن":
+"Confirm permession rejection",
+"تأكيد رفض الأجازة"
+:"Confirm holiday rejection"
+,"إعادة ضبط بيانات مستخدم"
+:"Reset user phone",
+"تصريح":"Permession",
+"برجاء قبول التصريح":"Please accept this permission to show start work",
+"هل تريد اعادة ضبط بيانات هاتف المستخدم؟"
+:"Do you want to reset user phone information?",
+ "جدولة المناوبات للمستخدم":"Schedule shifts for",
+ "تم اعادة الضبط بنجاح"
+ :"Reseted Successfully",
+ "تمت اضافة الجدولة بنجاح"
+ :"Mission added successfully",
+ "برجاء ادخال البيانات المطلوبة":"Please enter the needed data",
+ "خطا في التعديل":"Error occured while editing",
+ "تم التعديل بنجاح":"Edited successfully",
+ "التوقيت":"Timing",
+ "برجاء الأنتظار"
+ :"Please Wait",
+ "على وشك الأنتهاء":"Almost Done",
+ 
+ "برجاء تفعيل الموقع الجغرافى للهاتف":"Please activate the geographical location of the phone",
+ "برجاء تفعيل تصريح الموقع الجغرافي"
+ :"Please enable geolocation permission.",
+ "الحد الاقصى للمواقع"
+ :"Maximum sites limit",
+ "-":"-",
+"الحد الاقصى للمستخدمين"
+:"Maximum users limit",
+"اضغط للمحاولة مره اخرى"
+:"Press to try again",
+"محاولة مرة اخرى":"Try again",
+"عرض التقرير":"Display Report",
+"يجب ان يتم اختيار اقل من 32 يوم":
+"Less than 32 days must be selected",
+"غير مقيد بعد":"Not yet registered",
+"يجب ان لا يتخطي البريد الإلكترةني عن 80 حرف":"Email should not exceed 80 characters",
+"يوجد اجازة لم يتم الموافقة عليها فى هذه الفترة":"There is a Holiday that has not been approved during this period",
+"تم تعديل المناوبة بنجاح":"Shift edited successfully",
+"تمت إضافة المناوبة بنجاح"
+:"Shift added successfully",
+"خطأ في تعديل المناوبة":"Edit failed","خطأ في تعديل المناوبة:لايوجد اتصال بالانترنت":"Edit failed : No internet connection",
+"يجب ان لا تقل المدة عن 4 ساعات":"Duration should not be less than 4 hours and not exceed 17",
+"خطأ : الوقت المحدد بين بداية و نهاية المناوبة\n يجب ان يكون اكبر من اربع ساعات":"Error : The time specified between the start and end of the shift\n must be greater than four hours"
+,"خطأ في اضافة المناوبة : لايوجد اتصال بالانترنت":"Failed to add shift : No internet connection",
+"تم إضافة الأذن بنجاح":"Permession added successfully",
+"لا يمكن وضع الاجازة : يوجد مأمورية داخلية":"The holiday cannot be set: there is an internal mission",
+"يرجى الانتظار قليلا للحصول على رمز التفعيل قبل إعادة المحاولة مرة أخرى":"Please wait a bit to get the activation code before trying again",
+"تم حذف  الجدولة بنجاح":
+"Schedule deleted successfully","حذف الجدولة":"Delete Schedule",
+"هل تريد حذف الجدولة":"Do you want to delete this schedule",
+"تم حذف الجدولة بنجاح":"Schedule deleted successfully"
+, "خطأ فى الحذف":"Delete failed",
+"اختر الموقع و المناوبة":
+"Choose location and shift",
+"خطأ : تاريخ اليوم  اقل من بداية تاريخ الجدولة":"Error: Today's date is less than the start of the schedule date",
+"لا يوجد مناوبات بهذا الموقع\nبرجاء اضافة مناوبة":"There are no shifts at this site\nPlease add a shift",
+"تم تغيير كلمة المرور بنجاح"
+:"Password changed successfully","خطأ في تغيير كلمة المرور":"Failed to change password",
+"رقم المستخدم غير موجود":"User number not exist",
+"تعديل المواقع":"Edit sites",
+"إغلاق":"Close",
+"نعتذر لقد تم انتهاء اشتراك الشركة بتاريخ":
+"Sorry, the company's subscription date has expired on",
+"تنبية !":"Attention !",
+"برجاء اختيار اسم المستخدم":"Please choose a username"
+
+,
+"إضافة مواقع":
+"Add Sites" , 
+"تعديل مواقع"
+:"Edit Sites",
+"إضافة مناوبة":
+"Add Shift",
+"تعديل المناوبة":"Edit Shift",
+"لا يوجد مناوبات بهذا الموقع برجاء إضافة مناوبة اولا":
+"There are no shifts for this site ,Please add shift first",
+"تعديل مناوبة":"Edit Shift",
+"تم اضافة الموقع بنجاح":"Site added successfully"
+,"اسم المناوبة":
+"Shift name",
+"يجب ان لا يزيد اسم المناوبة عن 25 حرف":"Shift name must not exceed 25 characters",
+"برجاء العلم ان مواعيد المناوبة من":"Please note that the shift timings are from ",
+"كلمة المرور يجب ان تتكون من احرف ابجدية كبيرة و صغيرة":
+"Password must consist of uppercase and lowercase letters \n punctuation marks (!@#$&*~) and a number",
+"خطأ في اضافة المناوبة: اسم المناوبة مستخدم مسبقا لنفس الموقع"
+:"Error : Shift name is already used for the same site",
+"تسجيل الانصراف":"Register Leave",
+"الأتصال بالأنترنت ضعيف":"The internet connection is weak",
+"ليس مصرح لك التسجيل بالبطاقة":
+"Failed : You are not allowed to sign by card!",
+"برجاء المحاولة مرة اخرى":"Please try again",
+"لا يوجد اتصال بالانترنت \nبرجاء اعادة المحاولة":
+"There is no internet connection\nPlease try again"
+,"رمز تفعيل غير صحيح":"Invalid pinCode",
+"لا يوجد تسجيلات بهذا الموقع":"There is no records for this site",
+"تحليل بيانات الموظفين عن فترة":"Analyze employee data by period",
+"إصدار جديد":"New Version",
+"تحديث":"Update",
+"تم تحديث نسخة التطبيق برجاء تحميل اخر اصدار لمتابعة الإستخدام":"The application version has been updated. Please download the latest version to continue using",
+"تحديث التطبيق لأخر اصدار ؟":"Update the app to the latest version?",
+"برجاء اختيار صورة شخصية":"Please choose personal image",
+"حذف":"Delete",
+"خطأ : هذا المسخدم لديه جدولة فى نفس الفترة":"Error : This user has a schedule in the same period",
+"AM"
+:"AM",
+"PM":"PM",
+"ص"
+:"AM" ,
+"م"
+:"PM" ,
+
+"لا يمكنك ارسال إثبات حضور لهذا المستخدم":
+"You can't send attend proof to this user\n User attended using personal identification card",
+"جاري تحميل التحديث فى الخلفية":"Update is being downloaded in background",
+"تم التحديث بنجاح":"Update downloaded successfully",
+
+"مرحبا بعودتك":"Welcome Back",
+"باستخدام chilango فإنك توافق على":"By using Chilangu you agree to our " ,
+"سياسة الخصوصية":"Privacy Policy" ,
+"يجمع chilango بيانات الموقع الخاصة بك لتسجيل الحضور و الإنصراف يوميا":"Chilangu collects your current location data when app is opened to record your attend / leave per day",
+"يصل Chilango إلى جهات الإتصال لديك فى حالة كنت أدمن او موارد بشرية من أجل إضافة موظف من جهة الإتصال":"Chilangu access your phone contacts if you are an admin or hr in order to add an employee from your contacts",
+"يأخذ Chilango صورتك الشخصية ويستخدمها إذا كنت تسجل حضورك اليومي بطريقة البطاقة ليتم الرجوع إليها عند الحاجة في التقارير":"Chilangu takes and uses your personal image if you are regestering your daily attend by card method to be referenced when needed in reports",
+"يتصل Chilango بالكاميرا لإلتقاط صورة لك عنذ إنشاء الحساب للمرة الأولى و عند مسح الكود":"Chilangu access your camera to take a picture of you when account is created for first time and scan barcodes",
+"يرسل لك Chilango إشعارات عند الحاجة":"Chilangu sends you notifications when needed",
+"موافق":"Agree",
+"يجب ان توافق على شروط Chilango حتى يمكنك الأستمرار":"You must agree on Chilangu terms to continue using the app",
+"خطأ : لم يتم إرسال اثبات الحضور":"Fail : Attend proof was not sent please try again later",
+"تمت الموافقة":"Agreed successfully",
+"لا يمكن وضع الأجازة : تم الحضور":"Fail : already attended",
+"تم الموافقة بعد حضور المستخدم":"Approved after user attending",
+"تم الإلغاء بسبب حضور المستخدم قبل الموافقة على الإذن":"Cancelled due to user's presence before permission was approved",
+"لا يمكن تنفيذ طلبك المسخدم سجل حضور بالفعل":"Cannot execute your request\n user already attended",
+"خطأ : المستخدم لة مأمورية فى تلك الفترة":"Error : User have a mission in this period !",
+"برجاء اختيار مناوبة":"Please choose a valid shift !",
+"لقد تجاوزت العدد المسموح بة من الأذونات لهذا اليوم":"You have exceeded the number of allowed permessions for this day",
+"لقد تجاوزت الحد المسموح من الطلبات التى لم يتم الرد عليها":"You have exceeded the number of allowed requests for pending requests",
+"requests daily exceed":"You have exceeded the number of allowed requests for today",
+"خطأ : يبدأ اول يوم فى الجدولة قبل انتهاء المناوبة الأساسية":"First day of schedule starts before original shift ends",
+"خطأ : ينتهى اخر يوم فى الجدولة بعد بداية المناوبة الأساسية":"Last day of schedule ends After original shift start",
+"خطأ : يبدأ يوم الأحد قبل إنتهاء يوم السبت":"Sunday starts before Saturday ends",
+"خطأ : يبدأ يوم الأثنين قبل إنتهاء يوم الأحد":"Monday starts before Sunday ends",
+"خطأ : يبدأ يوم الثلاثاء قبل إنتهاء يوم الأثنين":"Tuesday starts before monday ends",
+"خطأ : يبدأ يوم الأربعاء قبل إنتهاء يوم الثلاثاء":"Wednesday starts before Tuesday ends",
+"خطأ : يبدأ يوم الخميس قبل إنتهاء يوم الأربعاء":"Thursday starts before Wednesday ends",
+"خطأ : يبدأ يوم الجمعة قبل إنتهاء يوم الخميس":"Friday starts before Thursday ends",
+"خطأ : يبدأ يوم السبت قبل إنتهاء يوم الجمعة":"Saturday starts before Friday ends",
+"رقم خاطئ":"Wrong number",
+"خطأ : لا يمكن تسجيل إذن فى هذا التوقيت":"Fail : You can't add permession in this time",
+ "يوجد تقاطع مع إذن اخر فى نفس التوقيت":
+"Fail : You can't add permession in this time \n There is an intersection with another permission at the same time",
+"إدارة إثبات الحضور":"Attend proof management",
+"يجب ان يكون إذن التأخير عن الحضور قبل موعد الأنصراف بساعة":"Fail : You can’t register late attend permission in this period",
+"يجب أن يكون إذن الإنصراف المبكر بعد بدء المناوبة بساعة واحدة":"Fail : You can’t register early leave permission in this period"
+, "المناوبة":"Shift",
+"عرض المأموريات عن فترة":"Display missions in period",
+"مأمورياتى الداخلية":"My internal missions"
+}
+    

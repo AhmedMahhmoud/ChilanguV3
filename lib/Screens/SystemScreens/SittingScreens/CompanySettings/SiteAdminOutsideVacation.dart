@@ -1,0 +1,901 @@
+import 'package:auto_size_text/auto_size_text.dart';
+import 'package:date_time_picker/date_time_picker.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_screenutil/screen_util.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:intl/intl.dart';
+import 'package:lottie/lottie.dart';
+import 'package:provider/provider.dart';
+import 'package:qr_users/Core/colorManager.dart';
+import 'package:qr_users/Core/lang/Localization/localizationConstant.dart';
+import 'package:qr_users/FirebaseCloudMessaging/FirebaseFunction.dart';
+
+import 'package:qr_users/Screens/NormalUserMenu/NormalUserVacationRequest.dart';
+import 'package:qr_users/Screens/Notifications/Screen/Notifications.dart';
+import 'package:qr_users/Screens/SystemScreens/ReportScreens/RadioButtonWidget.dart';
+import 'package:qr_users/Screens/SystemScreens/SittingScreens/MembersScreens/UserFullData.dart';
+import 'package:qr_users/services/AllSiteShiftsData/sites_shifts_dataService.dart';
+import 'package:qr_users/services/MemberData/MemberData.dart';
+import 'package:qr_users/services/ShiftsData.dart';
+import 'package:qr_users/services/Sites_data.dart';
+import 'package:qr_users/services/UserHolidays/user_holidays.dart';
+import 'package:qr_users/services/UserPermessions/user_permessions.dart';
+import 'package:qr_users/services/user_data.dart';
+import 'package:qr_users/widgets/DirectoriesHeader.dart';
+import 'package:qr_users/widgets/headers.dart';
+import 'package:qr_users/widgets/roundedButton.dart';
+import 'package:date_range_picker/date_range_picker.dart' as DateRagePicker;
+import '../../../../Core/constants.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+
+class SiteAdminOutsideVacation extends StatefulWidget {
+  final Member member;
+  int radioValue;
+  final List<String> permessionTitles;
+  final List<String> holidayTitles;
+  SiteAdminOutsideVacation(
+      this.member, this.radioValue, this.permessionTitles, this.holidayTitles);
+  @override
+  _SiteAdminOutsideVacationState createState() =>
+      _SiteAdminOutsideVacationState();
+}
+
+var sleectedMember;
+DateTime toDate;
+String toText;
+String fromText;
+DateTime fromDate;
+DateTime yesterday, tomorrow, _today;
+TextEditingController timeOutController = TextEditingController();
+String dateToString = "";
+String dateFromString = "";
+String newString = "";
+List<String> missions = ["داخلية", "خارجية"];
+TimeOfDay toPicked;
+String dateDifference;
+List<DateTime> picked = [];
+String formattedTime;
+String _selectedDateString;
+Future userHoliday;
+Future userPermession;
+Future userMission;
+TextEditingController externalMissionController = TextEditingController();
+
+class _SiteAdminOutsideVacationState extends State<SiteAdminOutsideVacation> {
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+  }
+
+  bool isPicked = false;
+
+  TextEditingController _dateController = TextEditingController();
+
+  List<DateTime> picked = [];
+
+  TextEditingController _nameController = TextEditingController();
+
+  @override
+  void initState() {
+    isPicked = false;
+
+    final now = DateTime.now();
+    fromText = "";
+    toText = "";
+
+    commentController.text = "";
+    timeOutController.text = "";
+    externalMissionController.text = "";
+    toPicked = (intToTimeOfDay(0));
+    toDate = DateTime(
+        DateTime.now().year, DateTime.now().month, DateTime.now().day + 1);
+    tomorrow = DateTime(
+        DateTime.now().year, DateTime.now().month, DateTime.now().day + 1);
+    fromDate = tomorrow;
+    _selectedDateString = tomorrow.toString();
+    yesterday = DateTime(now.year, DateTime.december, 30);
+    _today = DateTime.now();
+    // sleectedMember =
+    //     Provider.of<MemberData>(context, listen: false).membersList[0].name;
+    selectedReason = widget.holidayTitles.first;
+    selectedPermession = widget.permessionTitles.first;
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    SystemChrome.setEnabledSystemUIOverlays([]);
+    return GestureDetector(
+        onTap: () {
+          _nameController.text == ""
+              ? FocusScope.of(context).unfocus()
+              : SystemChannels.textInput.invokeMethod('TextInput.hide');
+        },
+        child: Scaffold(
+          endDrawer: NotificationItem(),
+          body: Container(
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height,
+            child: Column(
+              children: [
+                Header(
+                  nav: false,
+                  goUserMenu: false,
+                  goUserHomeFromMenu: false,
+                ),
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Container(
+                      child: Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              SmallDirectoriesHeader(
+                                Lottie.asset("resources/calender.json",
+                                    repeat: false),
+                                getTranslated(context, "الأجازات و المأموريات"),
+                              ),
+                            ],
+                          ),
+                          VacationCardHeader(
+                            header:
+                                "${getTranslated(context, "تسجيل طلب للمستخدم :")} ${widget.member.name}",
+                          ),
+                          VacationCardHeader(
+                            header: getTranslated(context, "نوع الطلب"),
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              RadioButtonWidg(
+                                radioVal2: widget.radioValue,
+                                radioVal: 3,
+                                title: getTranslated(context, "أذن"),
+                                onchannge: (value) {
+                                  setState(() {
+                                    widget.radioValue = value;
+                                  });
+                                },
+                              ),
+                              RadioButtonWidg(
+                                radioVal2: widget.radioValue,
+                                radioVal: 1,
+                                title: getTranslated(context, "اجازة"),
+                                onchannge: (value) {
+                                  setState(() {
+                                    widget.radioValue = value;
+                                  });
+                                },
+                              ),
+                            ],
+                          ),
+                          widget.radioValue == 1
+                              ? Column(
+                                  children: [
+                                    VacationCardHeader(
+                                      header:
+                                          getTranslated(context, "مدة الأجازة"),
+                                    ),
+                                    const SizedBox(
+                                      height: 5,
+                                    ),
+                                    Container(
+                                        child: Theme(
+                                      data: clockTheme1,
+                                      child: Builder(
+                                        builder: (context) {
+                                          return InkWell(
+                                              onTap: () async {
+                                                picked = await DateRagePicker
+                                                    .showDatePicker(
+                                                        context: context,
+                                                        initialFirstDate:
+                                                            selectedReason ==
+                                                                    getTranslated(
+                                                                        context,
+                                                                        "عارضة")
+                                                                ? _today
+                                                                : tomorrow,
+                                                        initialLastDate: toDate,
+                                                        firstDate: DateTime(
+                                                            DateTime.now().year,
+                                                            DateTime.now()
+                                                                .month,
+                                                            selectedReason ==
+                                                                    getTranslated(
+                                                                        context,
+                                                                        "عارضة")
+                                                                ? DateTime.now()
+                                                                    .day
+                                                                : DateTime.now()
+                                                                        .day +
+                                                                    1),
+                                                        lastDate: yesterday);
+
+                                                setState(() {
+                                                  _today = picked.first;
+                                                  tomorrow = picked.first;
+                                                  fromDate = picked.first;
+                                                  toDate = picked.last;
+                                                  dateDifference = (toDate
+                                                              .difference(
+                                                                  fromDate)
+                                                              .inDays +
+                                                          1)
+                                                      .toString();
+                                                  fromText =
+                                                      " ${getTranslated(context, "من")} ${DateFormat('yMMMd').format(fromDate).toString()}";
+                                                  toText =
+                                                      " ${getTranslated(context, "إلى")}  ${DateFormat('yMMMd').format(toDate).toString()}";
+                                                  newString =
+                                                      "$fromText $toText";
+                                                });
+
+                                                if (_dateController.text !=
+                                                    newString) {
+                                                  _dateController.text =
+                                                      newString;
+
+                                                  dateFromString = apiFormatter
+                                                      .format(fromDate);
+                                                  dateToString = apiFormatter
+                                                      .format(toDate);
+                                                }
+                                              },
+                                              child: Container(
+                                                // width: 330,
+                                                width: 365.w,
+                                                child: IgnorePointer(
+                                                  child: TextFormField(
+                                                    style: const TextStyle(
+                                                        color: Colors.black,
+                                                        fontWeight:
+                                                            FontWeight.w500),
+                                                    textInputAction:
+                                                        TextInputAction.next,
+                                                    controller: _dateController,
+                                                    decoration:
+                                                        kTextFieldDecorationFromTO
+                                                            .copyWith(
+                                                                hintText:
+                                                                    getTranslated(
+                                                                        context,
+                                                                        "المدة من / الى"),
+                                                                prefixIcon:
+                                                                    const Icon(
+                                                                  Icons
+                                                                      .calendar_today_rounded,
+                                                                  color: Colors
+                                                                      .orange,
+                                                                )),
+                                                  ),
+                                                ),
+                                              ));
+                                        },
+                                      ),
+                                    )),
+                                    const SizedBox(
+                                      height: 3,
+                                    ),
+                                    dateDifference != null
+                                        ? fromText == ""
+                                            ? Container()
+                                            : Container(
+                                                padding:
+                                                    const EdgeInsets.all(5),
+                                                child: Text(
+                                                  "${getTranslated(context, "تم اختيار")}$dateDifference ${getTranslated(context, "يوم")} ",
+                                                  style: const TextStyle(
+                                                      color: Colors.grey,
+                                                      fontWeight:
+                                                          FontWeight.w300),
+                                                ))
+                                        : Container(),
+                                    const SizedBox(
+                                      height: 5,
+                                    ),
+                                    VacationCardHeader(
+                                        header: getTranslated(
+                                      context,
+                                      "نوع الأجازة",
+                                    )),
+                                    Padding(
+                                      padding: EdgeInsets.only(right: 5.w),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Container(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 10),
+                                          decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                              border: Border.all(width: 1)),
+                                          width: 400.w,
+                                          height: 40.h,
+                                          child: DropdownButtonHideUnderline(
+                                              child: DropdownButton(
+                                            elevation: 2,
+                                            isExpanded: true,
+                                            items: widget.holidayTitles
+                                                .map((String x) {
+                                              return DropdownMenuItem<String>(
+                                                  value: x,
+                                                  child: AutoSizeText(
+                                                    x,
+                                                    style: const TextStyle(
+                                                        color: Colors.orange,
+                                                        fontWeight:
+                                                            FontWeight.w500),
+                                                  ));
+                                            }).toList(),
+                                            onChanged: (value) {
+                                              setState(() {
+                                                selectedReason = value;
+                                                if (value !=
+                                                    getTranslated(
+                                                        context, "عارضة")) {
+                                                  _dateController.text = "";
+                                                  newString = "";
+                                                  tomorrow = DateTime(
+                                                      DateTime.now().year,
+                                                      DateTime.now().month,
+                                                      DateTime.now().day + 1);
+                                                  _today = DateTime.now();
+                                                  toDate = tomorrow;
+                                                }
+                                              });
+                                            },
+                                            value: selectedReason,
+                                          )),
+                                        ),
+                                      ),
+                                    ),
+                                    DetialsTextField(commentController),
+                                    SizedBox(
+                                      height: 50.h,
+                                    ),
+                                    Provider.of<UserPermessionsData>(context)
+                                                .isLoading ||
+                                            Provider.of<UserHolidaysData>(
+                                                    context)
+                                                .isLoading
+                                        ? const CircularProgressIndicator(
+                                            backgroundColor: Colors.orange)
+                                        : RoundedButton(
+                                            onPressed: () async {
+                                              if (picked != null &&
+                                                  picked.isNotEmpty) {
+                                                // final DateTime now =
+                                                //     DateTime.now();
+                                                // final DateFormat format =
+                                                //     DateFormat(
+                                                //         'dd-M-yyyy'); //4-2-2021
+                                                // final String formatted =
+                                                //     format.format(now);
+                                                Provider.of<UserHolidaysData>(
+                                                        context,
+                                                        listen: false)
+                                                    .addHoliday(
+                                                        UserHolidays(
+                                                            holidayDescription:
+                                                                commentController
+                                                                    .text,
+                                                            fromDate: fromDate,
+                                                            toDate:
+                                                                picked.length ==
+                                                                        2
+                                                                    ? toDate
+                                                                    : fromDate,
+                                                            holidayType: selectedReason ==
+                                                                    getTranslated(
+                                                                        context,
+                                                                        "عارضة")
+                                                                ? 1
+                                                                : selectedReason ==
+                                                                        getTranslated(
+                                                                            context,
+                                                                            "مرضى")
+                                                                    ? 2
+                                                                    : 3,
+                                                            // createdOnDate:
+                                                            //     DateTime.now(),
+                                                            holidayStatus: 3),
+                                                        Provider.of<UserData>(
+                                                                context,
+                                                                listen: false)
+                                                            .user
+                                                            .userToken,
+                                                        widget.member.id)
+                                                    .then((value) {
+                                                  if (value ==
+                                                      Holiday.Success) {
+                                                    Fluttertoast.showToast(
+                                                            msg: getTranslated(
+                                                                context,
+                                                                "تم الإضافة بنجاح"),
+                                                            gravity:
+                                                                ToastGravity
+                                                                    .CENTER,
+                                                            backgroundColor:
+                                                                Colors.green)
+                                                        .whenComplete(() =>
+                                                            Navigator.pop(
+                                                                context));
+                                                  } else if (value ==
+                                                      Holiday
+                                                          .USER_ALREADY_ATTENDED) {
+                                                    displayErrorToast(context,
+                                                        "لا يمكن وضع الأجازة : تم الحضور");
+                                                  } else if (value ==
+                                                      Holiday
+                                                          .External_Mission_InThis_Period) {
+                                                    displayErrorToast(context,
+                                                        "خطأ : يوجد مأمورية خارجية");
+                                                  } else if (value ==
+                                                      Holiday
+                                                          .Holiday_Approved_InThis_Period) {
+                                                    displayErrorToast(context,
+                                                        "يوجد اجازة تم الموافقة عليها فى هذه الفترة");
+                                                  } else if (value ==
+                                                      Holiday
+                                                          .Internal_Mission_InThis_Period) {
+                                                    displayErrorToast(context,
+                                                        "لا يمكن وضع الاجازة : يوجد مأمورية داخلية");
+                                                  } else if (value ==
+                                                      Holiday
+                                                          .Permession_InThis_Period) {
+                                                    displayToast(context,
+                                                        "لا يمكن طلب الاجازة : يوجد طلب اذن");
+                                                  } else if (value ==
+                                                      Holiday
+                                                          .Another_Holiday_NOT_APPROVED) {
+                                                    displayErrorToast(context,
+                                                        "يوجد اجازة لم يتم الموافقة عليها فى هذه الفترة");
+                                                  } else if (value ==
+                                                      Holiday
+                                                          .Daily_limit_Reached) {
+                                                    displayErrorToast(context,
+                                                        "requests daily exceed");
+                                                  } else {
+                                                    errorToast(context);
+                                                  }
+                                                });
+                                              } else {
+                                                Fluttertoast.showToast(
+                                                    gravity:
+                                                        ToastGravity.CENTER,
+                                                    backgroundColor: Colors.red,
+                                                    msg: getTranslated(context,
+                                                        "قم بأدخال مدة الأجازة"));
+                                              }
+                                            },
+                                            title: getTranslated(
+                                              context,
+                                              "حفظ",
+                                            ))
+                                  ],
+                                )
+                              : Column(
+                                  children: [
+                                    Card(
+                                      elevation: 5,
+                                      child: Container(
+                                        padding: const EdgeInsets.all(10),
+                                        child: Row(
+                                          children: [
+                                            AutoSizeText(
+                                              getTranslated(
+                                                  context, "نوع الأذن"),
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.w600,
+                                                  fontSize:
+                                                      setResponsiveFontSize(
+                                                          11)),
+                                              maxLines: 2,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Column(
+                                        children: [
+                                          Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Container(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 10),
+                                              decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(10),
+                                                  border: Border.all(width: 1)),
+                                              width: 400.w,
+                                              height: 40.h,
+                                              child:
+                                                  DropdownButtonHideUnderline(
+                                                      child: DropdownButton(
+                                                elevation: 2,
+                                                isExpanded: true,
+                                                items: widget.permessionTitles
+                                                    .map((String x) {
+                                                  return DropdownMenuItem<
+                                                          String>(
+                                                      value: x,
+                                                      child: AutoSizeText(
+                                                        x,
+                                                        style: const TextStyle(
+                                                            color:
+                                                                Colors.orange,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .w500),
+                                                      ));
+                                                }).toList(),
+                                                onChanged: (value) {
+                                                  setState(() {
+                                                    selectedPermession = value;
+                                                  });
+                                                },
+                                                value: selectedPermession,
+                                              )),
+                                            ),
+                                          ),
+                                          const Divider(),
+                                          Card(
+                                            elevation: 5,
+                                            child: Container(
+                                              padding: const EdgeInsets.all(10),
+                                              child: Row(
+                                                children: [
+                                                  AutoSizeText(
+                                                    getTranslated(
+                                                        context, "تاريخ الأذن"),
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                        fontSize:
+                                                            setResponsiveFontSize(
+                                                                13)),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                          Container(
+                                            padding: const EdgeInsets.all(5),
+                                            child: Container(
+                                              child: Theme(
+                                                data: clockTheme,
+                                                child: DateTimePicker(
+                                                  initialValue:
+                                                      _selectedDateString,
+
+                                                  onChanged: (value) {
+                                                    date = value;
+
+                                                    setState(() {
+                                                      _selectedDateString =
+                                                          date;
+                                                      selectedDate =
+                                                          DateTime.parse(
+                                                              _selectedDateString);
+                                                    });
+                                                  },
+                                                  type: DateTimePickerType.date,
+                                                  initialDate: _today,
+                                                  firstDate: _today,
+                                                  lastDate: DateTime(
+                                                      DateTime.now().year,
+                                                      DateTime.december,
+                                                      31),
+                                                  //controller: _endTimeController,
+                                                  style: TextStyle(
+                                                      fontSize: ScreenUtil().setSp(
+                                                          14,
+                                                          allowFontScalingSelf:
+                                                              true),
+                                                      color: Colors.black,
+                                                      fontWeight:
+                                                          FontWeight.w400),
+
+                                                  decoration:
+                                                      kTextFieldDecorationTime
+                                                          .copyWith(
+                                                              hintStyle:
+                                                                  const TextStyle(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w400,
+                                                                color: Colors
+                                                                    .black,
+                                                              ),
+                                                              hintText: 'اليوم',
+                                                              prefixIcon:
+                                                                  const Icon(
+                                                                Icons
+                                                                    .access_time,
+                                                                color: Colors
+                                                                    .orange,
+                                                              )),
+                                                  validator: (val) {
+                                                    if (val.length == 0) {
+                                                      return 'مطلوب';
+                                                    }
+                                                    return null;
+                                                  },
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          Card(
+                                            elevation: 5,
+                                            child: Container(
+                                              padding: const EdgeInsets.all(10),
+                                              child: Row(
+                                                children: [
+                                                  AutoSizeText(
+                                                    selectedPermession ==
+                                                            getTranslated(
+                                                                context,
+                                                                "تأخير عن الحضور")
+                                                        ? getTranslated(context,
+                                                            "اذن حتى الساعة")
+                                                        : getTranslated(context,
+                                                            "اذن من الساعة"),
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                        fontSize:
+                                                            setResponsiveFontSize(
+                                                                13)),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                          Container(
+                                            width: double.infinity,
+                                            height: 50.h,
+                                            child: Container(
+                                                child: Theme(
+                                              data: clockTheme,
+                                              child: Builder(
+                                                builder: (context) {
+                                                  return InkWell(
+                                                      onTap: () async {
+                                                        final to =
+                                                            await showTimePicker(
+                                                          context: context,
+                                                          initialTime: toPicked,
+                                                          builder: (BuildContext
+                                                                  context,
+                                                              Widget child) {
+                                                            return MediaQuery(
+                                                              data: MediaQuery.of(
+                                                                      context)
+                                                                  .copyWith(
+                                                                alwaysUse24HourFormat:
+                                                                    false,
+                                                              ),
+                                                              child: child,
+                                                            );
+                                                          },
+                                                        );
+
+                                                        if (to != null) {
+                                                          final now =
+                                                              new DateTime
+                                                                  .now();
+                                                          final dt = DateTime(
+                                                              now.year,
+                                                              now.month,
+                                                              now.day,
+                                                              to.hour,
+                                                              to.minute);
+
+                                                          formattedTime =
+                                                              DateFormat.Hm()
+                                                                  .format(dt);
+
+                                                          toPicked = to;
+                                                          setState(() {
+                                                            timeOutController
+                                                                    .text =
+                                                                "${toPicked.format(context).replaceAll(" ", " ")}";
+                                                          });
+                                                        }
+                                                      },
+                                                      child: Container(
+                                                        child: IgnorePointer(
+                                                          child: TextFormField(
+                                                            enabled: false,
+                                                            style: const TextStyle(
+                                                                color: Colors
+                                                                    .black,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w400),
+                                                            textInputAction:
+                                                                TextInputAction
+                                                                    .next,
+                                                            controller:
+                                                                timeOutController,
+                                                            decoration: kTextFieldDecorationFromTO
+                                                                .copyWith(
+                                                                    hintText:
+                                                                        'الوقت',
+                                                                    prefixIcon:
+                                                                        const Icon(
+                                                                      Icons
+                                                                          .alarm,
+                                                                      color: Colors
+                                                                          .orange,
+                                                                    )),
+                                                          ),
+                                                        ),
+                                                      ));
+                                                },
+                                              ),
+                                            )),
+                                          ),
+                                          DetialsTextField(commentController)
+                                        ],
+                                      ),
+                                    ),
+                                    Provider.of<UserPermessionsData>(context)
+                                                .isLoading ||
+                                            Provider.of<UserHolidaysData>(
+                                                    context)
+                                                .isLoading
+                                        ? const CircularProgressIndicator(
+                                            backgroundColor: Colors.orange)
+                                        : RoundedButton(
+                                            onPressed: () async {
+                                              if (_selectedDateString != null &&
+                                                  timeOutController.text !=
+                                                      "") {
+                                                final String msg = await Provider
+                                                        .of<UserPermessionsData>(
+                                                            context,
+                                                            listen: false)
+                                                    .addUserPermession(
+                                                        UserPermessions(
+                                                            // createdOn:
+                                                            //     DateTime.now(),
+                                                            date: DateTime.parse(
+                                                                _selectedDateString),
+                                                            duration:
+                                                                formattedTime
+                                                                    .replaceAll(
+                                                                        ":", ""),
+                                                            permessionType:
+                                                                selectedPermession == getTranslated(context, "تأخير عن الحضور")
+                                                                    ? 1
+                                                                    : 2,
+                                                            permessionDescription:
+                                                                commentController.text == ""
+                                                                    ? getTranslated(
+                                                                        context, "لا يوجد تعليق")
+                                                                    : commentController.text,
+                                                            user: widget.member.name),
+                                                        Provider.of<UserData>(context, listen: false).user.userToken,
+                                                        widget.member.id);
+                                                if (msg == "success") {
+                                                  Fluttertoast.showToast(
+                                                          msg: getTranslated(
+                                                            context,
+                                                            "تم الإضافة بنجاح",
+                                                          ),
+                                                          backgroundColor:
+                                                              Colors.green,
+                                                          gravity: ToastGravity
+                                                              .CENTER)
+                                                      .whenComplete(() =>
+                                                          Navigator.pop(
+                                                              context));
+
+                                                  // sendFcmMessage(
+                                                  //   topicName: "",
+                                                  //   userToken:
+                                                  //       widget.member.fcmToken,
+                                                  //   title: "اذن",
+                                                  //   category: "permession",
+                                                  //   message: "تم وضع اذن لك",
+                                                  // );
+                                                } else if (msg ==
+                                                    "external mission") {
+                                                  debugPrint("external found");
+                                                  Fluttertoast.showToast(
+                                                      gravity:
+                                                          ToastGravity.CENTER,
+                                                      backgroundColor:
+                                                          Colors.red,
+                                                      msg: getTranslated(
+                                                          context,
+                                                          "يوجد مأمورية خارجية فى هذا اليوم"));
+                                                } else if (msg ==
+                                                    'already exist') {
+                                                  Fluttertoast.showToast(
+                                                      gravity:
+                                                          ToastGravity.CENTER,
+                                                      backgroundColor:
+                                                          Colors.red,
+                                                      msg: getTranslated(
+                                                          context,
+                                                          "لقد تم تقديم طلب من قبل"));
+                                                } else if (msg == "failed") {
+                                                  errorToast(context);
+                                                } else if (msg ==
+                                                    "dublicate permession") {
+                                                  Fluttertoast.showToast(
+                                                      gravity:
+                                                          ToastGravity.CENTER,
+                                                      backgroundColor:
+                                                          Colors.red,
+                                                      msg: getTranslated(
+                                                          context,
+                                                          "يوجد اذن فى هذا اليوم"));
+                                                }
+                                              } else {
+                                                Fluttertoast.showToast(
+                                                    gravity:
+                                                        ToastGravity.CENTER,
+                                                    backgroundColor: Colors.red,
+                                                    msg: getTranslated(context,
+                                                        "قم بأدخال البيانات المطلوبة"));
+                                              }
+                                            },
+                                            title:
+                                                getTranslated(context, "حفظ"),
+                                          )
+                                  ],
+                                ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ));
+  }
+}
+
+class VacationCardHeader extends StatelessWidget {
+  final String header;
+  const VacationCardHeader({
+    this.header,
+    Key key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      elevation: 5,
+      child: Container(
+        padding: const EdgeInsets.all(10),
+        child: Row(
+          children: [
+            AutoSizeText(
+              header,
+              style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                  fontSize: setResponsiveFontSize(13)),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

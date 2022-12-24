@@ -1,0 +1,559 @@
+import 'dart:async';
+
+import 'package:animate_do/animate_do.dart';
+import 'package:auto_size_text/auto_size_text.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
+import 'package:qr_users/Core/lang/Localization/localizationConstant.dart';
+
+import 'package:qr_users/Screens/SystemScreens/SittingScreens/CompanySettings/OutsideVacation.dart';
+import 'package:qr_users/Screens/SystemScreens/SittingScreens/CompanySettings/SiteAdminOutsideVacation.dart';
+import 'package:qr_users/Screens/SystemScreens/SittingScreens/MembersScreens/UserFullData.dart';
+import 'package:qr_users/Screens/SystemScreens/SittingScreens/ShiftsScreen/ShiftSchedule/ReallocateUsers.dart';
+import 'package:qr_users/Core/constants.dart';
+import 'package:qr_users/services/AllSiteShiftsData/site_shifts_all.dart';
+import 'package:qr_users/services/AllSiteShiftsData/sites_shifts_dataService.dart';
+import 'package:qr_users/services/AttendProof/attend_proof.dart';
+import 'package:qr_users/services/DaysOff.dart';
+import 'package:qr_users/services/MemberData/MemberData.dart';
+import 'package:qr_users/services/Shift.dart';
+import 'package:qr_users/services/ShiftsData.dart';
+import 'package:qr_users/services/Sites_data.dart';
+import 'package:qr_users/services/company.dart';
+
+import 'package:qr_users/services/user_data.dart';
+
+import 'package:qr_users/widgets/RoundedAlert.dart';
+import 'package:qr_users/widgets/UserFullData/assignTaskToUser.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+
+class UserProperties extends StatefulWidget {
+  final Member user;
+  final int siteIndex;
+  const UserProperties({
+    this.user,
+    this.siteIndex,
+  });
+
+  @override
+  _UserPropertiesState createState() => _UserPropertiesState();
+}
+
+class _UserPropertiesState extends State<UserProperties> {
+  int getsiteIDbyShiftId(int shiftId) {
+    final list = Provider.of<ShiftsData>(context, listen: false).shiftsList;
+    final List<Shift> currentSite =
+        list.where((element) => element.shiftId == shiftId).toList();
+    debugPrint(currentSite[0].siteID.toString());
+    return currentSite[0].siteID;
+  }
+
+  String getShiftName() {
+    final list = Provider.of<ShiftsData>(context, listen: false).shiftsList;
+    final int index = list.length;
+    for (int i = 0; i < index; i++) {
+      if (list[i].shiftId == widget.user.shiftId) {
+        return list[i].shiftName;
+      }
+    }
+    return "";
+  }
+
+  int getsiteIDbyName(String siteName) {
+    final list =
+        Provider.of<SiteShiftsData>(context, listen: false).siteShiftList;
+    final List<SiteShiftsModel> currentSite =
+        list.where((element) => element.siteName == siteName).toList();
+    return currentSite[0].siteId;
+  }
+
+  shiftScheduling() async {
+    final userProvider = Provider.of<UserData>(context, listen: false);
+    final comProvider = Provider.of<CompanyData>(context, listen: false);
+    // String shiftName = getShiftName();
+
+    await Provider.of<DaysOffData>(context, listen: false)
+        .getDaysOff(comProvider.com.id, userProvider.user.userToken, context);
+    for (int i = 0; i < 7; i++) {
+      await Provider.of<DaysOffData>(context, listen: false).setSiteAndShift(
+          //hngeb al data de mn al back kolha
+          i,
+          widget.user.siteName, //default site name
+          widget.user.shiftName,
+          widget.user.shiftId,
+          widget.user.siteId);
+    }
+    Navigator.pop(context);
+
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ReAllocateUsers(
+            widget.user,
+            false,
+            0,
+          ),
+        ));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final userDataProvider = Provider.of<UserData>(context, listen: false).user;
+    final memberData = Provider.of<MemberData>(context, listen: false);
+
+    return ZoomIn(
+      child: Container(
+        // decoration: BoxDecoration(
+        //     border: Border.all(width: 2, color: Colors.orange[600])),
+        padding: const EdgeInsets.all(10),
+        child: StatefulBuilder(
+          builder: (context, setState) {
+            return Column(
+              children: [
+                AssignTaskToUser(
+                    taskName: userDataProvider.userType != 2
+                        ? getTranslated(
+                            context, "تسجيل  مأموريات / اذونات / اجازات")
+                        : getTranslated(context, "تسجيل اذونات / اجازات"),
+                    iconData: FontAwesomeIcons.calendarCheck,
+                    function: () => userDataProvider.userType == 2
+                        ? Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  SiteAdminOutsideVacation(widget.user, 3, [
+                                getTranslated(context, "تأخير عن الحضور"),
+                                getTranslated(context, "انصراف مبكر")
+                              ], [
+                                getTranslated(context, "عارضة"),
+                                getTranslated(context, "مرضى"),
+                                getTranslated(context, "رصيد اجازات")
+                              ]),
+                            ))
+                        : Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    OutsideVacation(widget.user, 2, [
+                                      getTranslated(context, "تأخير عن الحضور"),
+                                      getTranslated(context, "انصراف مبكر")
+                                    ], [
+                                      getTranslated(context, "عارضة"),
+                                      getTranslated(context, "مرضى"),
+                                      getTranslated(context, "رصيد اجازات")
+                                    ])),
+                          )),
+                const Divider(),
+                userDataProvider.userType == 4
+                    ? AssignTaskToUser(
+                        function: () {
+                          return showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return RoundedAlert(
+                                    onPressed: () async {
+                                      showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return RoundedLoadingIndicator();
+                                          });
+                                      final token = Provider.of<UserData>(
+                                              context,
+                                              listen: false)
+                                          .user
+                                          .userToken;
+                                      if (await memberData.resetMemberMac(
+                                              widget.user.id, context) ==
+                                          "Success") {
+                                        Navigator.pop(context);
+                                        Fluttertoast.showToast(
+                                          msg: getTranslated(
+                                              context, "تم اعادة الضبط بنجاح"),
+                                          gravity: ToastGravity.CENTER,
+                                          toastLength: Toast.LENGTH_SHORT,
+                                          timeInSecForIosWeb: 1,
+                                          backgroundColor: Colors.green,
+                                          textColor: Colors.white,
+                                          fontSize: 16.0,
+                                        );
+                                      } else {
+                                        displayErrorToast(
+                                            context, "خطأ في اعادة الضبط");
+                                      }
+                                      Navigator.pop(context);
+                                      Navigator.pop(context);
+                                    },
+                                    title: getTranslated(
+                                        context, 'إعادة ضبط بيانات مستخدم'),
+                                    content: getTranslated(context,
+                                        "هل تريد اعادة ضبط بيانات هاتف المستخدم؟"));
+                              });
+                        },
+                        iconData: Icons.repeat,
+                        taskName:
+                            getTranslated(context, "اعادة ضبط هاتف المستخدم"),
+                      )
+                    : Container(),
+                userDataProvider.userType == 4 ? const Divider() : Container(),
+                userDataProvider.userType == 4
+                    ? Padding(
+                        padding: const EdgeInsets.only(right: 3),
+                        child: Container(
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              AutoSizeText(
+                                getTranslated(
+                                  context,
+                                  "السماح للمستخدم بالتسجيل بالبطاقة",
+                                ),
+                                style: TextStyle(
+                                    fontSize: setResponsiveFontSize(13)),
+                              ),
+                              Container(
+                                width: 20.w,
+                                height: 20.h,
+                                child: Pulse(
+                                  duration: const Duration(milliseconds: 800),
+                                  child: Checkbox(
+                                    checkColor: Colors.white,
+                                    activeColor: Colors.orange,
+                                    value: widget.user.isAllowedToAttend,
+                                    onChanged: (value) async {
+                                      showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return RoundedLoadingIndicator();
+                                          });
+
+                                      widget.user.isAllowedToAttend = value;
+                                      final bool isSuccess =
+                                          await Provider.of<MemberData>(context,
+                                                  listen: false)
+                                              .allowMemberAttendByCard(
+                                                  widget.user.id,
+                                                  value,
+                                                  Provider.of<UserData>(context,
+                                                          listen: false)
+                                                      .user
+                                                      .userToken);
+                                      Navigator.pop(context);
+                                      if (isSuccess) {
+                                        setState(() {
+                                          allowToAttendBox = value;
+                                        });
+                                        displayToast(
+                                            context, "تم التعديل بنجاح");
+                                      } else {
+                                        displayToast(context, "حدث خطأ ما");
+                                      }
+                                    },
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                      )
+                    : Container(),
+                userDataProvider.userType == 4 ? const Divider() : Container(),
+                userDataProvider.userType == 4
+                    ? Padding(
+                        padding: const EdgeInsets.only(right: 3),
+                        child: Container(
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              AutoSizeText(
+                                getTranslated(context, "عدم الظهور فى التقرير"),
+                                style: TextStyle(
+                                    fontSize: setResponsiveFontSize(13)),
+                              ),
+                              Container(
+                                width: 20.w,
+                                height: 20.h,
+                                child: Pulse(
+                                  duration: const Duration(milliseconds: 800),
+                                  child: Checkbox(
+                                    checkColor: Colors.white,
+                                    activeColor: Colors.orange,
+                                    value: widget.user.excludeFromReport,
+                                    onChanged: (value) async {
+                                      if (value == true) {}
+
+                                      showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return RoundedLoadingIndicator();
+                                          });
+                                      widget.user.excludeFromReport = value;
+                                      bool isSuccess =
+                                          await Provider.of<MemberData>(context,
+                                                  listen: false)
+                                              .exludeUserFromReport(
+                                                  widget.user.id,
+                                                  value,
+                                                  Provider.of<UserData>(context,
+                                                          listen: false)
+                                                      .user
+                                                      .userToken);
+                                      Navigator.pop(context);
+                                      if (isSuccess) {
+                                        setState(() {
+                                          noShowInReport = value;
+                                        });
+                                        displayToast(
+                                            context, "تم التعديل بنجاح");
+                                      } else {
+                                        displayToast(context, "حدث خطأ ما");
+                                      }
+                                    },
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                      )
+                    : Container(),
+                userDataProvider.userType == 4 ? const Divider() : Container(),
+                userDataProvider.userType == 4 || userDataProvider.userType == 2
+                    ? AssignTaskToUser(
+                        taskName: getTranslated(context, "جدولة المناوبات"),
+                        iconData: Icons.table_view,
+                        function: () async {
+                          final userProv =
+                              Provider.of<UserData>(context, listen: false)
+                                  .user;
+
+                          showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return RoundedLoadingIndicator();
+                              });
+                          final userProvider =
+                              Provider.of<UserData>(context, listen: false);
+
+                          final comProvider =
+                              Provider.of<CompanyData>(context, listen: false);
+
+                          await Provider.of<DaysOffData>(context, listen: false)
+                              .getDaysOff(comProvider.com.id,
+                                  userProvider.user.userToken, context);
+                          final isEdit = await Provider.of<ShiftsData>(context,
+                                  listen: false)
+                              .getFirstAvailableSchedule(widget.user.id);
+                          if (userProv.userType == 2 && isEdit == false) {
+                            Fluttertoast.showToast(
+                                    msg: getTranslated(
+                                        context, "لا يوجد جدولة لهذا المستخدم"),
+                                    backgroundColor: Colors.red,
+                                    gravity: ToastGravity.CENTER)
+                                .then((value) => Navigator.pop(context));
+                          } else {
+                            debugPrint(isEdit.toString());
+
+                            if (isEdit == false) {
+                              await Provider.of<SiteData>(context,
+                                      listen: false)
+                                  .setDropDownShift(0, true);
+                              await Provider.of<SiteData>(context,
+                                      listen: false)
+                                  .setDropDownIndex(0, true);
+                              Provider.of<SiteShiftsData>(context,
+                                      listen: false)
+                                  .getShiftsList(
+                                      Provider.of<SiteShiftsData>(context,
+                                              listen: false)
+                                          .siteShiftList[Provider.of<SiteData>(
+                                                  context,
+                                                  listen: false)
+                                              .dropDownSitesIndex]
+                                          .siteName,
+                                      false);
+
+                              shiftScheduling();
+                              Navigator.pop(context);
+                            } else {
+                              final scheduleList = Provider.of<ShiftsData>(
+                                      context,
+                                      listen: false)
+                                  .firstAvailableSchedule;
+                              Navigator.pop(context);
+
+                              Provider.of<ShiftsData>(context, listen: false)
+                                  .sitesSchedules = [
+                                scheduleList.satShift.siteName,
+                                scheduleList.sunShift.siteName,
+                                scheduleList.monShift.siteName,
+                                scheduleList.tuesShift.siteName,
+                                scheduleList.wednShift.siteName,
+                                scheduleList.thurShift.siteName,
+                                scheduleList.friShift.siteName
+                              ];
+                              Provider.of<ShiftsData>(context, listen: false)
+                                  .shiftSchedules = [
+                                scheduleList.satShift.shiftName,
+                                scheduleList.sunShift.shiftName,
+                                scheduleList.monShift.shiftName,
+                                scheduleList.tuesShift.shiftName,
+                                scheduleList.wednShift.shiftName,
+                                scheduleList.thurShift.shiftName,
+                                scheduleList.friShift.shiftName
+                              ];
+                              for (int i = 0; i < 7; i++) {
+                                await Provider.of<DaysOffData>(context,
+                                        listen: false)
+                                    .setSiteAndShift(
+                                  i,
+                                  Provider.of<ShiftsData>(context,
+                                          listen: false)
+                                      .sitesSchedules[i],
+                                  Provider.of<ShiftsData>(context,
+                                          listen: false)
+                                      .shiftSchedules[i],
+                                  userDataProvider.userType == 2
+                                      ? userProv.userShiftId
+                                      : i == 0
+                                          ? scheduleList.satShift.shiftId
+                                          : i == 1
+                                              ? scheduleList.sunShift.shiftId
+                                              : i == 2
+                                                  ? scheduleList
+                                                      .monShift.shiftId
+                                                  : i == 3
+                                                      ? scheduleList
+                                                          .tuesShift.shiftId
+                                                      : i == 4
+                                                          ? scheduleList
+                                                              .wednShift.shiftId
+                                                          : i == 5
+                                                              ? scheduleList
+                                                                  .thurShift
+                                                                  .shiftId
+                                                              : i == 6
+                                                                  ? scheduleList
+                                                                      .friShift
+                                                                      .shiftId
+                                                                  : 0,
+                                  userDataProvider.userType == 2
+                                      ? userProv.userSiteId
+                                      : i == 0
+                                          ? scheduleList.satShift.siteId
+                                          : i == 1
+                                              ? scheduleList.sunShift.siteId
+                                              : i == 2
+                                                  ? scheduleList.monShift.siteId
+                                                  : i == 3
+                                                      ? scheduleList
+                                                          .tuesShift.siteId
+                                                      : i == 4
+                                                          ? scheduleList
+                                                              .wednShift.siteId
+                                                          : i == 5
+                                                              ? scheduleList
+                                                                  .thurShift
+                                                                  .siteId
+                                                              : i == 6
+                                                                  ? scheduleList
+                                                                      .friShift
+                                                                      .siteId
+                                                                  : 0,
+                                );
+                              }
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => ReAllocateUsers(
+                                            widget.user,
+                                            isEdit,
+                                            0,
+                                          )));
+                            }
+                          }
+                        })
+                    : Container(),
+                const Divider(),
+                userDataProvider.userType != 2
+                    ? AssignTaskToUser(
+                        taskName: getTranslated(
+                          context,
+                          "إرسال اثبات حضور",
+                        ),
+                        iconData: FontAwesomeIcons.checkCircle,
+                        function: () async {
+                          showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return RoundedLoadingIndicator();
+                              });
+                          final AttendProof attendProof = AttendProof();
+
+                          await attendProof
+                              .sendAttendProof(userDataProvider.userToken,
+                                  widget.user.id, userDataProvider.id)
+                              .then((value) {
+                            print(value);
+                            switch (value) {
+                              case "success":
+                                Fluttertoast.showToast(
+                                    msg: getTranslated(
+                                        context, "تم الإرسال بنجاح"),
+                                    backgroundColor: Colors.green,
+                                    gravity: ToastGravity.CENTER);
+                                // });
+                                break;
+                              case 'notification fail':
+                                displayErrorToast(
+                                    context, 'خطأ : لم يتم إرسال اثبات الحضور');
+                                break;
+                              case "fail shift":
+                                displayErrorToast(context,
+                                    "خطأ : لا يمكن طلب اثبات حضور خارج توقيت المناوبة");
+
+                                break;
+                              case "limit exceed":
+                                displayErrorToast(context,
+                                    "خطأ : لقد تجاوزت العدد المسموح بة لهذا المستخدم");
+
+                                break;
+
+                              case "null":
+                                displayErrorToast(
+                                  context,
+                                  "خطأ فى الأرسال \n لم يتم تسجيل الدخول بهذا المستخدم من قبل",
+                                );
+                                break;
+                              case "cant send":
+                                displayErrorToast(context,
+                                    "لا يمكنك ارسال إثبات حضور لهذا المستخدم");
+                                break;
+                              case "fail present":
+                                Fluttertoast.showToast(
+                                    msg: getTranslated(
+                                      context,
+                                      "لم يتم تسجيل حضور هذا المتسخدم",
+                                    ),
+                                    backgroundColor: Colors.red,
+                                    gravity: ToastGravity.CENTER);
+                                break;
+                              case "fail":
+                                errorToast(context);
+                                break;
+                            }
+                          }).then((value) => Navigator.pop(context));
+                        })
+                    : Container()
+              ],
+            );
+          },
+        ),
+      ),
+    );
+  }
+}

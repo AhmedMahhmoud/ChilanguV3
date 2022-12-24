@@ -1,0 +1,758 @@
+import 'dart:async';
+import 'dart:developer';
+import 'dart:io';
+
+import 'package:animate_do/animate_do.dart';
+import 'package:auto_size_text/auto_size_text.dart';
+import 'package:autocomplete_textfield/autocomplete_textfield.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:lottie/lottie.dart';
+import 'package:provider/provider.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:qr_users/Core/colorManager.dart';
+import 'package:qr_users/Core/constants.dart';
+import 'package:qr_users/Core/lang/Localization/localizationConstant.dart';
+import 'package:qr_users/Screens/Notifications/Screen/Notifications.dart';
+import 'package:qr_users/Screens/SystemScreens/SittingScreens/MembersScreens/UserFullData.dart';
+import 'package:qr_users/Screens/SystemScreens/SystemGateScreens/NavScreenPartTwo.dart';
+import 'package:qr_users/main.dart';
+import 'package:qr_users/services/AllSiteShiftsData/sites_shifts_dataService.dart';
+import 'package:qr_users/services/MemberData/MemberData.dart';
+import 'package:qr_users/services/Settings/settings.dart';
+import 'package:qr_users/services/Sites_data.dart';
+import 'package:qr_users/services/company.dart';
+import 'package:qr_users/services/permissions_data.dart';
+import 'package:qr_users/services/user_data.dart';
+import 'package:qr_users/widgets/DirectoriesHeader.dart';
+import 'package:qr_users/widgets/Shared/HandleNetwork_ServerDown/handleState.dart';
+import 'package:qr_users/widgets/Shared/centerMessageText.dart';
+import 'package:qr_users/widgets/UserFullData/member_tile.dart';
+import 'package:qr_users/widgets/UserFullData/rounded_searchBar.dart';
+import 'package:qr_users/widgets/headers.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:intl_phone_number_input/intl_phone_number_input.dart'
+    as intlPhone;
+import 'package:qr_users/widgets/multiple_floating_buttons.dart';
+import 'package:qr_users/widgets/roundedAlert.dart';
+
+import 'AddUserScreen.dart';
+
+// ignore: must_be_immutable
+class UsersScreen extends StatefulWidget {
+  final selectedIndex;
+  var comingFromShifts = false;
+
+  String comingShiftName;
+  bool popTheScreen = false;
+  UsersScreen(this.selectedIndex, this.comingFromShifts, this.comingShiftName,
+      [this.popTheScreen]);
+
+  @override
+  _UsersScreenState createState() => _UsersScreenState();
+  String selectedValue = "كل المواقع";
+}
+
+class _UsersScreenState extends State<UsersScreen> {
+  TextEditingController _nameController = TextEditingController();
+  AutoCompleteTextField searchTextField;
+  final ScrollController _scrollController = ScrollController();
+  String currentShiftName;
+
+  @override
+  void didChangeDependencies() {
+    Provider.of<MemberData>(context, listen: false).resetPagination();
+    Provider.of<PermissionHan>(context, listen: false).initializeUserScroll();
+    final userProvider = Provider.of<UserData>(context, listen: false);
+    final comProvier = Provider.of<CompanyData>(context, listen: false);
+    if (widget.comingFromShifts == false) {
+      Provider.of<SiteShiftsData>(context, listen: false).getShiftsList(
+          Provider.of<SiteShiftsData>(context, listen: false).sites[1].name,
+          true);
+      Provider.of<SiteData>(context, listen: false)
+        ..setSiteValue("كل المواقع")
+        ..setDropDownIndex(0, false)
+        ..setDropDownShift(0, false);
+      if (mounted)
+        Provider.of<SiteData>(context, listen: false)
+            .setSiteValue("كل المواقع");
+    }
+
+    getData();
+    _scrollController.addListener(() async {
+      if (_scrollController.position.pixels ==
+          _scrollController.position.maxScrollExtent) {
+        // log("reached end of list");
+
+        if (Provider.of<MemberData>(context, listen: false).keepRetriving) {
+          debugPrint("entered");
+          if (siteIndex == 0) {
+            await Provider.of<MemberData>(context, listen: false)
+                .getAllCompanyMember(-1, comProvier.com.id,
+                    userProvider.user.userToken, context, -1);
+          } else if (Provider.of<SiteData>(context, listen: false)
+                  .dropDownShiftIndex !=
+              0) {
+            await Provider.of<MemberData>(context, listen: false)
+                .getAllCompanyMember(
+                    Provider.of<SiteShiftsData>(context, listen: false)
+                        .siteShiftList[siteIndex]
+                        .siteId,
+                    comProvier.com.id,
+                    userProvider.user.userToken,
+                    context,
+                    Provider.of<SiteShiftsData>(context, listen: false)
+                        .shifts[Provider.of<SiteData>(context, listen: false)
+                            .dropDownShiftIndex]
+                        .shiftId);
+          } else {
+            await Provider.of<MemberData>(context, listen: false)
+                .getAllCompanyMember(
+                    Provider.of<SiteShiftsData>(context, listen: false)
+                        .siteShiftList[siteIndex - 1]
+                        .siteId,
+                    comProvier.com.id,
+                    userProvider.user.userToken,
+                    context,
+                    -1);
+          }
+        }
+      }
+    });
+    super.didChangeDependencies();
+  }
+
+  getData() async {
+    final userProvider = Provider.of<UserData>(context);
+    final comProvier = Provider.of<CompanyData>(context);
+
+    if (widget.selectedIndex != -1) {
+      debugPrint("widget index");
+      siteIndex = widget.selectedIndex;
+      final int shiftID = Provider.of<SiteShiftsData>(context, listen: false)
+          .shifts[
+              Provider.of<SiteData>(context, listen: false).dropDownShiftIndex]
+          .shiftId;
+      if (widget.comingFromShifts) {
+        await Provider.of<MemberData>(context, listen: false)
+            .getAllCompanyMember(
+                Provider.of<SiteShiftsData>(context, listen: false)
+                    .siteShiftList[siteIndex == 0 ? 0 : siteIndex - 1]
+                    .siteId,
+                comProvier.com.id,
+                userProvider.user.userToken,
+                context,
+                shiftID == -100 ? -1 : shiftID);
+        if (shiftID == -100) {
+          if (Provider.of<SiteData>(context, listen: false).dropDownSitesIndex >
+              0)
+            Provider.of<SiteData>(context, listen: false).dropDownSitesIndex--;
+          //
+        }
+        //WE ADD -1 TO SHIFT IF WE WANT TO DISPLAY ALL SHIFTS IN SITE (GET BY SITEID)
+        //-100 means ALL SHIFTS
+      } else if (!widget.comingFromShifts) {
+        Provider.of<MemberData>(context, listen: false).getAllCompanyMember(
+            Provider.of<SiteShiftsData>(context, listen: false)
+                .siteShiftList[siteIndex - 1]
+                .siteId,
+            comProvier.com.id,
+            userProvider.user.userToken,
+            context,
+            -1);
+      }
+    } else {
+      await Provider.of<MemberData>(context, listen: false)
+          .getAllCompanyMember(
+              -1, comProvier.com.id, userProvider.user.userToken, context, -1)
+          .then((value) async {
+        debugPrint("Got members");
+      });
+    }
+    if (mounted)
+      widget.selectedValue = Provider.of<SiteShiftsData>(context, listen: false)
+          .sites[siteIndex]
+          .name;
+  }
+
+  Future<List<String>> getPhoneInEdit(String phoneNumberEdit) async {
+    final intlPhone.PhoneNumber result =
+        await intlPhone.PhoneNumber.getRegionInfoFromPhoneNumber(
+            phoneNumberEdit);
+    return [result.isoCode, result.dialCode];
+  }
+
+  int siteIndex = 0;
+  String selectedId = "";
+
+  RefreshController refreshController =
+      RefreshController(initialRefresh: false);
+  searchInList(String value, int siteId, int companyId) {
+    if (value.isNotEmpty) {
+      Provider.of<MemberData>(context, listen: false).searchUsersList(
+          value,
+          Provider.of<UserData>(context, listen: false).user.userToken,
+          siteId,
+          companyId,
+          context);
+    } else {
+      Provider.of<MemberData>(context, listen: false).resetUsers();
+    }
+  }
+
+  int getSiteIndex(String siteName) {
+    final list =
+        Provider.of<SiteShiftsData>(context, listen: false).siteShiftList;
+    final int index = list.length;
+    for (int i = 0; i < index; i++) {
+      if (siteName == list[i].siteName) {
+        return i;
+      }
+    }
+    return -1;
+  }
+
+  Settings settings = Settings();
+  Timer _debounce;
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    _debounce?.cancel();
+    super.dispose();
+  }
+
+  Widget build(BuildContext context) {
+    final companyProv = Provider.of<CompanyData>(context, listen: false);
+    final siteProv = Provider.of<SiteShiftsData>(context, listen: false);
+    // final userDataProvider = Provider.of<UserData>(context, listen: false);
+    SystemChrome.setEnabledSystemUIOverlays([]);
+    return Consumer<MemberData>(builder: (context, memberData, child) {
+      return WillPopScope(
+        onWillPop: onWillPop,
+        child: GestureDetector(
+          onTap: () async {
+            FocusScope.of(context).unfocus();
+          },
+          child: NotificationListener(
+            onNotification: (notificationInfo) {
+              if (_scrollController.hasClients) {
+                if (_scrollController.position.userScrollDirection ==
+                    ScrollDirection.reverse) {
+                  Provider.of<PermissionHan>(context, listen: false)
+                      .setUserScrolling();
+                } else if (_scrollController.position.userScrollDirection ==
+                    ScrollDirection.forward) {
+                  Provider.of<PermissionHan>(context, listen: false)
+                      .resetUserscrolling();
+                }
+              }
+
+              return true;
+            },
+            child: Scaffold(
+                endDrawer: NotificationItem(),
+                backgroundColor: Colors.white,
+                body: Container(
+                  child: Stack(
+                    children: [
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Header(
+                            nav: false,
+                            goUserHomeFromMenu: false,
+                            goUserMenu: false,
+                          ),
+                          SmallDirectoriesHeader(
+                            Lottie.asset("resources/user.json", repeat: false),
+                            getTranslated(context, "دليل المستخدمين"),
+                          ),
+                          Expanded(
+                            child: FutureBuilder(
+                                future: Provider.of<SiteData>(context)
+                                    .futureListener,
+                                builder: (context, snapshot) {
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.waiting) {
+                                    return Container(
+                                      color: Colors.white,
+                                      child: Center(
+                                        child: Platform.isIOS
+                                            ? const CupertinoActivityIndicator()
+                                            : const CircularProgressIndicator(
+                                                backgroundColor: Colors.white,
+                                                valueColor:
+                                                    AlwaysStoppedAnimation<
+                                                        Color>(Colors.orange),
+                                              ),
+                                      ),
+                                    );
+                                  } else {
+                                    return FutureBuilder(
+                                        future: Provider.of<MemberData>(context)
+                                            .futureListener,
+                                        builder: (context, snapshot) {
+                                          if ((!snapshot.hasData ||
+                                                  snapshot.connectionState ==
+                                                      ConnectionState
+                                                          .waiting) &&
+                                              Provider.of<MemberData>(context)
+                                                      .membersList
+                                                      .length ==
+                                                  0 &&
+                                              Provider.of<MemberData>(context)
+                                                  .keepRetriving) {
+                                            return Container(
+                                              color: Colors.white,
+                                              child: Center(
+                                                child: Platform.isIOS
+                                                    ? const CupertinoActivityIndicator(
+                                                        radius: 20,
+                                                      )
+                                                    : const CircularProgressIndicator(
+                                                        backgroundColor:
+                                                            Colors.white,
+                                                        valueColor:
+                                                            AlwaysStoppedAnimation<
+                                                                    Color>(
+                                                                Colors.orange),
+                                                      ),
+                                              ),
+                                            );
+                                          }
+                                          switch (snapshot.connectionState) {
+                                            case ConnectionState.waiting:
+
+                                            case ConnectionState.done:
+                                              return Column(
+                                                children: [
+                                                  Container(
+                                                    height: 110.h,
+                                                    width: 330.w,
+                                                    child: RoundedSearchBar(
+                                                      list: Provider.of<
+                                                                  SiteShiftsData>(
+                                                              context,
+                                                              listen: true)
+                                                          .sites,
+                                                      dropdownValue:
+                                                          widget.selectedValue,
+                                                      resetTextFieldFun: () {
+                                                        setState(() {
+                                                          _nameController.text =
+                                                              "";
+                                                        });
+                                                      },
+                                                      searchFun: (value) {
+                                                        int siteiD = -1;
+                                                        final int siteindex =
+                                                            getSiteIndex(Provider.of<
+                                                                        SiteData>(
+                                                                    context,
+                                                                    listen:
+                                                                        false)
+                                                                .siteValue);
+
+                                                        if (siteindex != -1) {
+                                                          siteiD = Provider.of<
+                                                                      SiteShiftsData>(
+                                                                  context,
+                                                                  listen: false)
+                                                              .siteShiftList[
+                                                                  siteindex]
+                                                              .siteId;
+                                                        }
+
+                                                        searchInList(
+                                                            value,
+                                                            siteiD,
+                                                            Provider.of<CompanyData>(
+                                                                    context,
+                                                                    listen:
+                                                                        false)
+                                                                .com
+                                                                .id);
+                                                        setState(() {
+                                                          currentShiftName =
+                                                              value;
+                                                        });
+                                                        // do something with query
+                                                      },
+                                                      textController:
+                                                          _nameController,
+                                                      dropdownFun: (value) {
+                                                        setState(() {
+                                                          widget.selectedValue =
+                                                              value;
+                                                          debugPrint(
+                                                              "current : ${widget.selectedValue}");
+                                                          currentShiftName = "";
+                                                          _nameController
+                                                              .clear();
+                                                          Provider.of<MemberData>(
+                                                                  context,
+                                                                  listen: false)
+                                                              .userSearchMember
+                                                              .clear();
+                                                        });
+
+                                                        final userProvider =
+                                                            Provider.of<
+                                                                    UserData>(
+                                                                context,
+                                                                listen: false);
+                                                        final id = settings
+                                                            .getsiteIndex(
+                                                                context, value);
+                                                        if (id != siteIndex) {
+                                                          siteIndex = id;
+                                                          Provider.of<MemberData>(
+                                                                  context,
+                                                                  listen: false)
+                                                              .allPageIndex = 0;
+                                                          Provider.of<MemberData>(
+                                                                  context,
+                                                                  listen: false)
+                                                              .bySitePageIndex = 0;
+                                                          Provider.of<MemberData>(
+                                                                  context,
+                                                                  listen: false)
+                                                              .keepRetriving = true;
+                                                          Provider.of<MemberData>(
+                                                                  context,
+                                                                  listen: false)
+                                                              .getAllCompanyMember(
+                                                                  Provider.of<SiteShiftsData>(
+                                                                          context,
+                                                                          listen:
+                                                                              false)
+                                                                      .sites[
+                                                                          siteIndex]
+                                                                      .id,
+                                                                  companyProv
+                                                                      .com.id,
+                                                                  userProvider
+                                                                      .user
+                                                                      .userToken,
+                                                                  context,
+                                                                  -1);
+                                                          setState(() {
+                                                            widget.selectedValue =
+                                                                siteProv
+                                                                    .sites[
+                                                                        siteIndex]
+                                                                    .name;
+                                                          });
+                                                        }
+                                                      },
+                                                    ),
+                                                  ),
+                                                  Expanded(
+                                                      child: _nameController
+                                                                      .text !=
+                                                                  null &&
+                                                              _nameController
+                                                                      .text !=
+                                                                  ""
+                                                          ? Consumer<
+                                                              MemberData>(
+                                                              builder: (context,
+                                                                  value,
+                                                                  child) {
+                                                                return value
+                                                                        .loadingSearch
+                                                                    ? Center(
+                                                                        child: Lottie.asset(
+                                                                            "resources/searching.json",
+                                                                            width:
+                                                                                200.w,
+                                                                            height: 200.h),
+                                                                      )
+                                                                    : value.userSearchMember.length ==
+                                                                            0
+                                                                        ? Center(
+                                                                            child:
+                                                                                AutoSizeText(
+                                                                              getTranslated(context, "لا يوجد نتائج للبحث"),
+                                                                              style: TextStyle(fontWeight: FontWeight.bold, fontSize: setResponsiveFontSize(17)),
+                                                                            ),
+                                                                          )
+                                                                        : Container(
+                                                                            alignment:
+                                                                                Alignment.topCenter,
+                                                                            width: double.infinity,
+                                                                            child: !locator.locator<PermissionHan>().isInternetConnected
+                                                                                ? Center(child: AutoSizeText(getTranslated(context, "لا يوجد اتصال بالأنترنت \n  برجاء اعادة المحاولة مرة اخرى")))
+                                                                                : ListView.builder(
+                                                                                    controller: _scrollController,
+                                                                                    itemCount: value.userSearchMember.length,
+                                                                                    itemBuilder: (BuildContext context, int index) {
+                                                                                      return InkWell(
+                                                                                        onTap: () {
+                                                                                          if (locator.locator<PermissionHan>().isServerDown) {
+                                                                                            serverDownDialog(context);
+                                                                                          } else {
+                                                                                            Navigator.push(
+                                                                                                context,
+                                                                                                MaterialPageRoute(
+                                                                                                  builder: (context) => UserFullDataScreen(
+                                                                                                    index: index,
+                                                                                                    onResetMac: () {
+                                                                                                      settings.resetMacAddress(context, value.userSearchMember[index].id);
+                                                                                                    },
+                                                                                                    onTapDelete: () {
+                                                                                                      settings.deleteUser(context, value.userSearchMember[index].id, index, value.userSearchMember[index].username);
+                                                                                                    },
+                                                                                                    siteIndex: siteIndex,
+                                                                                                    userId: value.userSearchMember[index].id,
+                                                                                                  ),
+                                                                                                ));
+                                                                                          }
+                                                                                        },
+                                                                                        child: Slidable(
+                                                                                          enabled: Provider.of<UserData>(context, listen: false).user.userType == 4,
+                                                                                          actionExtentRatio: 0.10,
+                                                                                          closeOnScroll: true,
+                                                                                          controller: slidableController,
+                                                                                          actionPane: const SlidableDrawerActionPane(),
+                                                                                          secondaryActions: [
+                                                                                            ZoomIn(
+                                                                                                child: InkWell(
+                                                                                              child: Container(
+                                                                                                padding: const EdgeInsets.all(7),
+                                                                                                decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white, border: Border.all(width: 2, color: Colors.orange)),
+                                                                                                child: Icon(
+                                                                                                  Icons.edit,
+                                                                                                  size: 18,
+                                                                                                  color: ColorManager.primary,
+                                                                                                ),
+                                                                                              ),
+                                                                                              onTap: () async {
+                                                                                                showDialog(
+                                                                                                    context: context,
+                                                                                                    builder: (BuildContext context) {
+                                                                                                      return RoundedLoadingIndicator();
+                                                                                                    });
+                                                                                                final List<String> rolesList = [
+                                                                                                  getTranslated(context, "مستخدم"),
+                                                                                                  getTranslated(context, "مسئول تسجيل"),
+                                                                                                  getTranslated(context, "مدير موقع"),
+                                                                                                  getTranslated(context, "موارد بشرية"),
+                                                                                                  getTranslated(context, "ادمن"),
+                                                                                                ];
+                                                                                                await Provider.of<MemberData>(context, listen: false).getUserById(
+                                                                                                  value.userSearchMember[index].id,
+                                                                                                );
+                                                                                                final phone = await getPhoneInEdit(Provider.of<MemberData>(context, listen: false).singleMember.phoneNumber[0] != "+" ? "+${Provider.of<MemberData>(context, listen: false).singleMember.phoneNumber}" : Provider.of<MemberData>(context, listen: false).singleMember.phoneNumber);
+                                                                                                Navigator.of(context).push(
+                                                                                                  new MaterialPageRoute(
+                                                                                                    builder: (context) => AddUserScreen(Provider.of<MemberData>(context, listen: false).singleMember, index, true, phone[0], phone[1], false, "", rolesList[Provider.of<MemberData>(context, listen: false).singleMember.userType]),
+                                                                                                  ),
+                                                                                                );
+                                                                                              },
+                                                                                            )),
+                                                                                            Provider.of<UserData>(context, listen: false).user.id == value.userSearchMember[index].id
+                                                                                                ? Container()
+                                                                                                : ZoomIn(
+                                                                                                    child: InkWell(
+                                                                                                    child: Container(
+                                                                                                      padding: const EdgeInsets.all(7),
+                                                                                                      decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white, border: Border.all(width: 2, color: Colors.red)),
+                                                                                                      child: const Icon(
+                                                                                                        Icons.delete,
+                                                                                                        size: 18,
+                                                                                                        color: Colors.red,
+                                                                                                      ),
+                                                                                                    ),
+                                                                                                    onTap: () {
+                                                                                                      settings.deleteUser(context, value.userSearchMember[index].id, index, value.userSearchMember[index].username);
+                                                                                                    },
+                                                                                                  )),
+                                                                                          ],
+                                                                                          child: Card(
+                                                                                            elevation: 2,
+                                                                                            child: Container(
+                                                                                              alignment: Alignment.centerRight,
+                                                                                              width: double.infinity,
+                                                                                              height: 50.h,
+                                                                                              child: Padding(
+                                                                                                padding: const EdgeInsets.all(10.0),
+                                                                                                child: AutoSizeText(
+                                                                                                  value.userSearchMember[index].username,
+                                                                                                ),
+                                                                                              ),
+                                                                                            ),
+                                                                                          ),
+                                                                                        ),
+                                                                                      );
+                                                                                    }));
+                                                              },
+                                                            )
+                                                          : memberData.membersList
+                                                                      .length !=
+                                                                  0
+                                                              ? Container(
+                                                                  alignment:
+                                                                      Alignment
+                                                                          .topCenter,
+                                                                  width: double
+                                                                      .infinity,
+                                                                  child: ListView
+                                                                      .builder(
+                                                                          controller:
+                                                                              _scrollController,
+                                                                          itemCount: memberData
+                                                                              .membersListScreenDropDownSearch
+                                                                              .length,
+                                                                          itemBuilder:
+                                                                              (BuildContext context, int index) {
+                                                                            final Member
+                                                                                user =
+                                                                                memberData.membersListScreenDropDownSearch[index];
+                                                                            return MemberTile(
+                                                                              index: index,
+                                                                              user: memberData.membersListScreenDropDownSearch[index],
+                                                                              onTapDelete: () {
+                                                                                settings.deleteUser(context, user.id, index, user.name);
+                                                                              },
+                                                                              onResetMac: () {
+                                                                                settings.resetMacAddress(context, user.id);
+                                                                              },
+                                                                            );
+                                                                          }),
+                                                                )
+                                                              : widget.selectedValue ==
+                                                                          "كل المواقع" ||
+                                                                      Provider.of<SiteData>(context, listen: false)
+                                                                              .dropDownShiftIndex ==
+                                                                          0
+                                                                  ? !locator
+                                                                          .locator<
+                                                                              PermissionHan>()
+                                                                          .isInternetConnected
+                                                                      ? Center(
+                                                                          child:
+                                                                              AutoSizeText(
+                                                                          getTranslated(
+                                                                              context,
+                                                                              "لا يوجد اتصال بالأنترنت \n  برجاء اعادة المحاولة مرة اخرى"),
+                                                                          style:
+                                                                              boldStyle.copyWith(height: 1.5),
+                                                                          textAlign:
+                                                                              TextAlign.center,
+                                                                        ))
+                                                                      : Center(
+                                                                          child:
+                                                                              AutoSizeText(
+                                                                            getTranslated(context,
+                                                                                "لا يوجد مستخدمين بهذا الموقع\nبرجاء اضافة مستخدمين"),
+                                                                            maxLines:
+                                                                                1,
+                                                                            textAlign:
+                                                                                TextAlign.center,
+                                                                            style: TextStyle(
+                                                                                height: 2,
+                                                                                fontSize: ScreenUtil().setSp(16, allowFontScalingSelf: true),
+                                                                                fontWeight: FontWeight.w700),
+                                                                          ),
+                                                                        )
+                                                                  : Center(
+                                                                      child:
+                                                                          AutoSizeText(
+                                                                        getTranslated(
+                                                                            context,
+                                                                            "لا يوجد مستخدمين بهذه المناوبة\nبرجاء اضافة مستخدمين"),
+                                                                        maxLines:
+                                                                            1,
+                                                                        textAlign:
+                                                                            TextAlign.center,
+                                                                        style: TextStyle(
+                                                                            height:
+                                                                                2,
+                                                                            fontSize:
+                                                                                ScreenUtil().setSp(16, allowFontScalingSelf: true),
+                                                                            fontWeight: FontWeight.w700),
+                                                                      ),
+                                                                    )),
+                                                ],
+                                              );
+                                            default:
+                                              return Center(
+                                                child: Platform.isIOS
+                                                    ? const CupertinoActivityIndicator(
+                                                        radius: 20,
+                                                      )
+                                                    : const CircularProgressIndicator(
+                                                        backgroundColor:
+                                                            Colors.white,
+                                                        valueColor:
+                                                            AlwaysStoppedAnimation<
+                                                                    Color>(
+                                                                Colors.orange),
+                                                      ),
+                                              );
+                                          }
+                                        });
+                                  }
+                                }),
+                          ),
+                          Provider.of<MemberData>(context).membersList.length !=
+                                  0
+                              ? Provider.of<MemberData>(context).isLoading
+                                  ? Column(
+                                      children: [
+                                        const Center(
+                                            child: CupertinoActivityIndicator(
+                                          radius: 15,
+                                        )),
+                                        Container(
+                                          height: 30,
+                                        )
+                                      ],
+                                    )
+                                  : Container()
+                              : Container()
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                floatingActionButton:
+                    Provider.of<UserData>(context, listen: false)
+                                .user
+                                .userType ==
+                            4
+                        ? MultipleFloatingButtons(
+                            shiftIndex:
+                                Provider.of<SiteData>(context, listen: false)
+                                    .currentShiftIndex,
+                            comingFromShifts: widget.comingFromShifts ?? false,
+                            shiftName: widget.comingShiftName == ""
+                                ? Provider.of<SiteData>(context).siteValue
+                                : widget.comingShiftName,
+                            mainTitle: getTranslated(context, 'إضافة مستخدم'),
+                            mainIconData: Icons.person_add,
+                          )
+                        : MultipleFloatingButtonsNoADD()),
+          ),
+        ),
+      );
+    });
+  }
+
+  Future<bool> onWillPop() {
+    if (widget.popTheScreen != null) {
+      Navigator.pop(context);
+    } else {
+      Provider.of<MemberData>(context, listen: false).allPageIndex = 0;
+      Provider.of<MemberData>(context, listen: false).bySitePageIndex = 0;
+      Provider.of<MemberData>(context, listen: false).keepRetriving = true;
+      goAndRemoveUntill(context, const NavScreenTwo(3));
+    }
+
+    return Future.value(false);
+  }
+}
